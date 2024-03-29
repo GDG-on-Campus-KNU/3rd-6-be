@@ -8,6 +8,7 @@ import com.gdsc.petwalk.domain.entity.Member;
 import com.gdsc.petwalk.domain.entity.Role;
 import com.gdsc.petwalk.domain.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CustomOauth2UserService extends DefaultOAuth2UserService {
 
     private final MemberService memberService;
@@ -29,7 +31,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
         Member member = memberService.saveOrUpdate(Member.builder()
                 .name(oauth2Response.getName())
                 .email(oauth2Response.getEmail())
-                .role(Role.valueOf("ROLE_USER"))
+                .role(Role.ROLE_USER)
                 .build());
 
         PrincipalDetails principalDetails = new PrincipalDetails(member, oAuth2User.getAttributes());
