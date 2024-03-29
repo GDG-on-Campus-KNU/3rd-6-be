@@ -41,6 +41,5 @@ public class CustomOauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         log.info("OAuth2 로그인에 성공하였습니다. 이메일 : {}",  oauth2User.getEmail());
         log.info("OAuth2 로그인에 성공하였습니다. Access Token : {}",  accessToken);
         log.info("OAuth2 로그인에 성공하였습니다. Refresh Token : {}",  refreshToken);
-
     }
 }
