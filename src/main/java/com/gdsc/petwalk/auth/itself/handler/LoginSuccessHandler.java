@@ -39,5 +39,6 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         log.info("자체 로그인에 성공하였습니다. 이메일 : {}",  email);
         log.info("자체 로그인에 성공하였습니다. Access Token : {}",  accessToken);
         log.info("자체 로그인에 성공하였습니다. Refresh Token : {}",  refreshToken);
+
     }
 }

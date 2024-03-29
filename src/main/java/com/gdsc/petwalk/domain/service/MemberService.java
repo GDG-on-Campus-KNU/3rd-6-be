@@ -50,11 +50,11 @@ public class MemberService {
             throw new RuntimeException("member email이 이미 존재합니다");
         }
     }
-
     public Member findMemberByEmail(String email){
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow();
 
         return member;
     }
+
 }
