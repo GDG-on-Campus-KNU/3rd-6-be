@@ -1,0 +1,50 @@
+package com.gdsc.petwalk.auth.itself.filter;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gdsc.petwalk.auth.itself.dto.request.LoginRequestDto;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.util.StreamUtils;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
+public class CustomJsonUserPasswordAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
+
+    private final ObjectMapper objectMapper;
+
+    private static final String DEFAULT_LOGIN_REQUEST_URL = "/auth/login";
+    private static final String HTTP_METHOD = "POST";
+    private static final String CONTENT_TYPE = "application/json";
+    private static final AntPathRequestMatcher DEFAULT_LOGIN_REQUEST_MATCHER
+            = new AntPathRequestMatcher(DEFAULT_LOGIN_REQUEST_URL, HTTP_METHOD);
+
+    public CustomJsonUserPasswordAuthenticationFilter(ObjectMapper objectMapper) {
+        super(DEFAULT_LOGIN_REQUEST_MATCHER);
+        this.objectMapper = objectMapper;
+    }
+
+    @Override
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
+        if (request.getContentType() == null || !request.getContentType().equals(CONTENT_TYPE)) {
+            throw new AuthenticationServiceException("Authentication Content-Type not supported: " + request.getContentType());
+        }
+
+        String jsonMessageBody = StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8);
+        LoginRequestDto loginRequest = objectMapper.readValue(jsonMessageBody, LoginRequestDto.class);
+
+        String email = loginRequest.email();
+        String password = loginRequest.password();
+
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
+
+        return this.getAuthenticationManager().authenticate(authenticationToken);
+    }
+}
