@@ -5,6 +5,8 @@ import com.gdsc.petwalk.auth.itself.filter.CustomJsonUserPasswordAuthenticationF
 import com.gdsc.petwalk.auth.itself.handler.LoginFailureHandler;
 import com.gdsc.petwalk.auth.itself.handler.LoginSuccessHandler;
 import com.gdsc.petwalk.auth.itself.service.LoginService;
+import com.gdsc.petwalk.auth.jwt.filter.JwtAuthorizationFilter;
+import com.gdsc.petwalk.auth.jwt.service.JwtService;
 import com.gdsc.petwalk.auth.oauth2.handler.CustomOauth2SuccessHandler;
 import com.gdsc.petwalk.auth.oauth2.service.CustomOauth2UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
@@ -26,6 +29,8 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final JwtService jwtService;
+    private final JwtAuthorizationFilter jwtAuthorizationFilter;
     private final CustomOauth2UserService customOauth2UserService;
     private final CustomOauth2SuccessHandler customOauth2SuccessHandler;
     private final PasswordEncoder passwordEncoder;
@@ -47,10 +52,11 @@ public class SecurityConfig {
                         .oauth2Login((oauth2) -> oauth2
                                 .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOauth2UserService))
                                 .successHandler(customOauth2SuccessHandler))
+                        .addFilterAfter(customJsonUserPasswordAuthenticationFilter(), LogoutFilter.class)
+                        .addFilterBefore(jwtAuthorizationFilter, CustomJsonUserPasswordAuthenticationFilter.class)
                         .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                         .build();
     }
-
     @Bean
     public AuthenticationManager authenticationManager() {
         DaoAuthenticationProvider provider
@@ -74,7 +80,7 @@ public class SecurityConfig {
 
     @Bean
     public LoginSuccessHandler loginSuccessHandler() {
-        return new LoginSuccessHandler();
+        return new LoginSuccessHandler(jwtService);
     }
 
     @Bean
