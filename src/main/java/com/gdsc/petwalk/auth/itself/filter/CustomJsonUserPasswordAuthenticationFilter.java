@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.StreamUtils;
@@ -43,7 +44,8 @@ public class CustomJsonUserPasswordAuthenticationFilter extends AbstractAuthenti
         String email = loginRequest.email();
         String password = loginRequest.password();
 
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(email, password, AuthorityUtils.createAuthorityList("ROLE_USER", "ROLE_TEST"));
 
         return this.getAuthenticationManager().authenticate(authenticationToken);
     }
