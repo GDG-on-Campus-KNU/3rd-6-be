@@ -2,6 +2,7 @@ package com.gdsc.petwalk.domain.service;
 
 import com.gdsc.petwalk.auth.itself.dto.request.SignUpRequestDto;
 import com.gdsc.petwalk.domain.entity.Member;
+import com.gdsc.petwalk.domain.entity.Role;
 import com.gdsc.petwalk.domain.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,6 +41,7 @@ public class MemberService {
             Member member = Member.builder()
                     .name(signUpRequest.name())
                     .email(signUpRequest.email())
+                    .role(Role.ROLE_USER)
                     .password(passwordEncoder.encode(signUpRequest.password()))
                     .build();
 
@@ -47,5 +49,12 @@ public class MemberService {
         } else {
             throw new RuntimeException("member email이 이미 존재합니다");
         }
+    }
+
+    public Member findMemberByEmail(String email){
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow();
+
+        return member;
     }
 }
