@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class VisionguideApplication {
+public class PetWalkApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(VisionguideApplication.class, args);
+		SpringApplication.run(PetWalkApplication.class, args);
 	}
 
 }
