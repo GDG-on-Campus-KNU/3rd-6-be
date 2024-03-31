@@ -1,7 +1,7 @@
 package com.gdsc.petwalk.auth.jwt.filter;
 
 import com.gdsc.petwalk.auth.jwt.service.JwtService;
-import com.gdsc.petwalk.auth.principal.PrincipalDetails;
+import com.gdsc.petwalk.global.principal.PrincipalDetails;
 import com.gdsc.petwalk.domain.entity.Member;
 import com.gdsc.petwalk.domain.service.MemberService;
 import jakarta.servlet.FilterChain;

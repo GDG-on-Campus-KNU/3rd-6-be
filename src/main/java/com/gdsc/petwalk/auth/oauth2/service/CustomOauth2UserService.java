@@ -3,7 +3,7 @@ package com.gdsc.petwalk.auth.oauth2.service;
 import com.gdsc.petwalk.auth.oauth2.dto.response.GoogleResponse;
 import com.gdsc.petwalk.auth.oauth2.dto.response.NaverResponse;
 import com.gdsc.petwalk.auth.oauth2.dto.response.Oauth2Response;
-import com.gdsc.petwalk.auth.principal.PrincipalDetails;
+import com.gdsc.petwalk.global.principal.PrincipalDetails;
 import com.gdsc.petwalk.domain.entity.Member;
 import com.gdsc.petwalk.domain.entity.Role;
 import com.gdsc.petwalk.domain.service.MemberService;

@@ -1,6 +1,6 @@
 package com.gdsc.petwalk.auth.itself.controller;
 
-import com.gdsc.petwalk.auth.principal.PrincipalDetails;
+import com.gdsc.petwalk.global.principal.PrincipalDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
