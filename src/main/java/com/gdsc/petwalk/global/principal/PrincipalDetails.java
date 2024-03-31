@@ -1,4 +1,4 @@
-package com.gdsc.petwalk.auth.principal;
+package com.gdsc.petwalk.global.principal;
 
 import com.gdsc.petwalk.domain.entity.Member;
 import lombok.Getter;

@@ -9,6 +9,7 @@ import com.gdsc.petwalk.auth.jwt.filter.JwtAuthorizationFilter;
 import com.gdsc.petwalk.auth.jwt.service.JwtService;
 import com.gdsc.petwalk.auth.oauth2.handler.CustomOauth2SuccessHandler;
 import com.gdsc.petwalk.auth.oauth2.service.CustomOauth2UserService;
+import com.gdsc.petwalk.global.redis.service.RedisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,9 +30,10 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtService jwtService;
     private final JwtAuthorizationFilter jwtAuthorizationFilter;
     private final CustomOauth2UserService customOauth2UserService;
+    private final LoginSuccessHandler loginSuccessHandler;
+    private final LoginFailureHandler loginFailureHandler;
     private final CustomOauth2SuccessHandler customOauth2SuccessHandler;
     private final PasswordEncoder passwordEncoder;
     private final LoginService loginService;
@@ -72,20 +74,10 @@ public class SecurityConfig {
                 = new CustomJsonUserPasswordAuthenticationFilter(objectMapper());
 
         customJsonUserPasswordAuthenticationFilter.setAuthenticationManager(authenticationManager());
-        customJsonUserPasswordAuthenticationFilter.setAuthenticationSuccessHandler(loginSuccessHandler());
-        customJsonUserPasswordAuthenticationFilter.setAuthenticationFailureHandler(loginFailureHandler());
+        customJsonUserPasswordAuthenticationFilter.setAuthenticationSuccessHandler(loginSuccessHandler);
+        customJsonUserPasswordAuthenticationFilter.setAuthenticationFailureHandler(loginFailureHandler);
 
         return customJsonUserPasswordAuthenticationFilter;
-    }
-
-    @Bean
-    public LoginSuccessHandler loginSuccessHandler() {
-        return new LoginSuccessHandler(jwtService);
-    }
-
-    @Bean
-    public LoginFailureHandler loginFailureHandler() {
-        return new LoginFailureHandler();
     }
 
     @Bean

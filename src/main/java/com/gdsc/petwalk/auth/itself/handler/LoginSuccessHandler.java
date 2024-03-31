@@ -1,7 +1,8 @@
 package com.gdsc.petwalk.auth.itself.handler;
 
 import com.gdsc.petwalk.auth.jwt.service.JwtService;
-import com.gdsc.petwalk.auth.principal.PrincipalDetails;
+import com.gdsc.petwalk.global.principal.PrincipalDetails;
+import com.gdsc.petwalk.global.redis.service.RedisService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,15 +11,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Iterator;
+
+@Component
 @RequiredArgsConstructor
 @Slf4j
 public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtService jwtService;
+    private final RedisService redisService;
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
@@ -30,7 +34,8 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
         String accessToken = jwtService.createAccessToken(email, role);
         String refreshToken = jwtService.createRefreshToken();
-        jwtService.saveRefreshToken(email, refreshToken);
+        redisService.setRefreshToken(email, refreshToken);
+
 
         response.setHeader("Accesstoken", accessToken);
         response.addCookie(jwtService.createCookie("Authorization-refresh", refreshToken));
@@ -39,6 +44,6 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         log.info("자체 로그인에 성공하였습니다. 이메일 : {}",  email);
         log.info("자체 로그인에 성공하였습니다. Access Token : {}",  accessToken);
         log.info("자체 로그인에 성공하였습니다. Refresh Token : {}",  refreshToken);
-
+        log.info("Redis에 저장된 RefreshToken : {}", redisService.getRefreshToken(email));
     }
 }
