@@ -23,6 +23,9 @@ public class Comment {
 
     private String content;
 
+    @Column(name = "likes_count")
+    private Integer likesCount;
+
     @ManyToOne
     @JoinColumn(name = "board_id")
     private Board board;

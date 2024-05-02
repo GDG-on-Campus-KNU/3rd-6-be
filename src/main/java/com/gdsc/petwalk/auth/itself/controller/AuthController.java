@@ -1,7 +1,7 @@
 package com.gdsc.petwalk.auth.itself.controller;
 
 import com.gdsc.petwalk.auth.itself.dto.request.SignUpRequestDto;
-import com.gdsc.petwalk.domain.service.MemberService;
+import com.gdsc.petwalk.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

@@ -31,6 +31,9 @@ public class Board {
 
     private String content;
 
+    @Column(name = "likes_count")
+    private Integer likesCount;
+
     @Column(name = "writing_time")
     private LocalDateTime writingTime;
 

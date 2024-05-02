@@ -1,7 +1,7 @@
 package com.gdsc.petwalk.auth.oauth2.dto.request;
 
-import com.gdsc.petwalk.domain.entity.Member;
-import com.gdsc.petwalk.domain.entity.Role;
+import com.gdsc.petwalk.domain.member.entity.Member;
+import com.gdsc.petwalk.domain.member.entity.Role;
 import lombok.Builder;
 
 @Builder

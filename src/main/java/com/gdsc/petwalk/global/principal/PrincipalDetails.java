@@ -1,6 +1,6 @@
 package com.gdsc.petwalk.global.principal;
 
-import com.gdsc.petwalk.domain.entity.Member;
+import com.gdsc.petwalk.domain.member.entity.Member;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
