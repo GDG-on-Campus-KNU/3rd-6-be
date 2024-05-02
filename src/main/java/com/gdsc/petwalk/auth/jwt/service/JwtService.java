@@ -1,7 +1,7 @@
 package com.gdsc.petwalk.auth.jwt.service;
 
-import com.gdsc.petwalk.domain.entity.Member;
-import com.gdsc.petwalk.domain.repository.MemberRepository;
+import com.gdsc.petwalk.domain.member.entity.Member;
+import com.gdsc.petwalk.domain.member.repository.MemberRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
@@ -93,6 +93,7 @@ public class JwtService {
      * 나중에 Redis로 바꾸자
      */
     public void saveRefreshToken(String email, String refresh) {
+
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("member가 없어요"));
 

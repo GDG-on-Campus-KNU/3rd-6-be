@@ -1,6 +1,6 @@
-package com.gdsc.petwalk.domain.repository;
+package com.gdsc.petwalk.domain.member.repository;
 
-import com.gdsc.petwalk.domain.entity.Member;
+import com.gdsc.petwalk.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

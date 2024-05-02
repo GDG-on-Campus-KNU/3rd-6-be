@@ -1,8 +1,8 @@
 package com.gdsc.petwalk.auth.itself.service;
 
+import com.gdsc.petwalk.domain.member.entity.Member;
+import com.gdsc.petwalk.domain.member.repository.MemberRepository;
 import com.gdsc.petwalk.global.principal.PrincipalDetails;
-import com.gdsc.petwalk.domain.entity.Member;
-import com.gdsc.petwalk.domain.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

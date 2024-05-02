@@ -1,9 +1,9 @@
-package com.gdsc.petwalk.domain.service;
+package com.gdsc.petwalk.domain.member.service;
 
 import com.gdsc.petwalk.auth.itself.dto.request.SignUpRequestDto;
-import com.gdsc.petwalk.domain.entity.Member;
-import com.gdsc.petwalk.domain.entity.Role;
-import com.gdsc.petwalk.domain.repository.MemberRepository;
+import com.gdsc.petwalk.domain.member.entity.Member;
+import com.gdsc.petwalk.domain.member.entity.Role;
+import com.gdsc.petwalk.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
