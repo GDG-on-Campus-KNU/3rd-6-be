@@ -4,11 +4,15 @@ import com.gdsc.petwalk.auth.itself.dto.request.SignUpRequestDto;
 import com.gdsc.petwalk.domain.member.entity.Member;
 import com.gdsc.petwalk.domain.member.entity.Role;
 import com.gdsc.petwalk.domain.member.repository.MemberRepository;
+import com.gdsc.petwalk.domain.pet.dto.response.PetResponseDto;
+import com.gdsc.petwalk.domain.pet.entity.Pet;
+import com.gdsc.petwalk.global.principal.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,7 +22,6 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-
     public Member saveOrUpdate(Member member) {
         Optional<Member> optionalExistingMember = memberRepository.findByEmail(member.getEmail());
 
@@ -32,7 +35,7 @@ public class MemberService {
         }
     }
 
-    public void signUp(SignUpRequestDto signUpRequest) {
+    public Long signUp(SignUpRequestDto signUpRequest) {
 
         Optional<Member> optionalExistingMember = memberRepository.findByEmail(signUpRequest.email());
 
@@ -45,12 +48,14 @@ public class MemberService {
                     .password(passwordEncoder.encode(signUpRequest.password()))
                     .build();
 
-            memberRepository.save(member).getId();
+            return memberRepository.save(member).getId();
         } else {
+            // 예외처리 해야함
             throw new RuntimeException("member email이 이미 존재합니다");
         }
     }
     public Member findMemberByEmail(String email){
+        // 예외처리 해야함
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow();
 
