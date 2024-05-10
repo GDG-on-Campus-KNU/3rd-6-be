@@ -48,7 +48,4 @@ public class Pet {
 
     @OneToMany(mappedBy = "pet")
     private List<Review> reviews = new ArrayList<>();
-
-    private String region;
-    private String neighborhood;
 }

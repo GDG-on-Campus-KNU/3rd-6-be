@@ -45,6 +45,9 @@ public class Member {
     @Column(name = "role")
     private Role role; // 사용자의 역할
 
+    @Column
+    private String neighborhood; // 사용자의 동네 정보
+
     @Column(name = "refresh_token")
     private String refresh;
 
