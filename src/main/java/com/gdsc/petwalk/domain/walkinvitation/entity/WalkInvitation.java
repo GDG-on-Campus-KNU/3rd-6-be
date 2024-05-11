@@ -1,20 +1,24 @@
-package com.gdsc.petwalk.domain.walk.entity;
+package com.gdsc.petwalk.domain.walkinvitation.entity;
 
 import com.gdsc.petwalk.domain.member.entity.Member;
+import com.gdsc.petwalk.domain.photo.entity.Photo;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name = "walk_invitations")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class WalkInvitation {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "walk_invitaion_id")
     private Long id;
 
     @Column(nullable = false)
@@ -38,7 +42,24 @@ public class WalkInvitation {
     @Column(nullable = false)
     private LocalDateTime walkTime; // 산책 시간
 
-    @ManyToOne
-    @JoinColumn(name = "member_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
     private Member writer; // 게시글 작성자
+
+    @OneToMany(mappedBy = "walkInvitation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Photo> photoUrls = new ArrayList<>();
+
+    @Builder
+    public WalkInvitation(Long id, String title, String content, double latitude, double longitude, String detailedLocation, LocalDateTime walkDate, LocalDateTime walkTime, Member writer, List<Photo> photoUrls) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.detailedLocation = detailedLocation;
+        this.walkDate = walkDate;
+        this.walkTime = walkTime;
+        this.writer = writer;
+        this.photoUrls = photoUrls;
+    }
 }
