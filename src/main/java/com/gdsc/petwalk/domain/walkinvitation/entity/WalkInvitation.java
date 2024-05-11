@@ -8,7 +8,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,10 +39,9 @@ public class WalkInvitation {
     private String detailedLocation; // 세부 위치
 
     @Column(nullable = false)
-    private LocalDateTime walkDate; // 산책 날짜
+    private LocalDateTime walkDateTime; // 산책 날짜
 
-    @Column(nullable = false)
-    private LocalDateTime walkTime; // 산책 시간
+    private String walkingStatus; // 산책 상태
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -50,15 +51,15 @@ public class WalkInvitation {
     private List<Photo> photoUrls = new ArrayList<>();
 
     @Builder
-    public WalkInvitation(Long id, String title, String content, double latitude, double longitude, String detailedLocation, LocalDateTime walkDate, LocalDateTime walkTime, Member writer, List<Photo> photoUrls) {
+    public WalkInvitation(Long id, String title, String content, double latitude, double longitude, String detailedLocation, LocalDateTime walkDateTime, String walkingStatus, Member writer, List<Photo> photoUrls) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.latitude = latitude;
         this.longitude = longitude;
         this.detailedLocation = detailedLocation;
-        this.walkDate = walkDate;
-        this.walkTime = walkTime;
+        this.walkDateTime = walkDateTime;
+        this.walkingStatus = walkingStatus;
         this.writer = writer;
         this.photoUrls = photoUrls;
     }

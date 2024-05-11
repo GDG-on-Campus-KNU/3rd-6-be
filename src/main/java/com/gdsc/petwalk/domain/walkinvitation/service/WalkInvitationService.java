@@ -2,45 +2,47 @@ package com.gdsc.petwalk.domain.walkinvitation.service;
 
 import com.gdsc.petwalk.domain.member.entity.Member;
 import com.gdsc.petwalk.domain.photo.entity.Photo;
-import com.gdsc.petwalk.domain.photo.repository.PhotoRepository;
+import com.gdsc.petwalk.domain.photo.service.PhotoService;
 import com.gdsc.petwalk.domain.walkinvitation.dto.request.WalkInvitaionCreateRequestDto;
-import com.gdsc.petwalk.domain.walkinvitation.dto.response.HomeDetailsResponseDto;
+import com.gdsc.petwalk.domain.walkinvitation.dto.response.HomePageResponseDto;
+import com.gdsc.petwalk.domain.walkinvitation.dto.response.WalkInvitationDetailsResponseDto;
 import com.gdsc.petwalk.domain.walkinvitation.entity.WalkInvitation;
-import com.gdsc.petwalk.domain.walkinvitation.repository.HomeRepository;
+import com.gdsc.petwalk.domain.walkinvitation.repository.WalkInvitationRepository;
 import com.gdsc.petwalk.global.principal.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class HomeService {
+public class WalkInvitationService {
 
-    private final HomeRepository homeRepository;
+    private final WalkInvitationRepository walkInvitationRepository;
+    private final PhotoService photoService;
 
-    public HomeDetailsResponseDto getHomeDetailsById(Long id) {
+    public WalkInvitationDetailsResponseDto getHomeDetailsById(Long id) {
         //예외 처리 이후 수정
-        WalkInvitation walkInvitation = homeRepository.findById(id)
+        WalkInvitation walkInvitation = walkInvitationRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("WalkInvitaion이 없습니다"));
 
         Member member = walkInvitation.getWriter();
         List<Photo> photos = walkInvitation.getPhotoUrls();
         List<String> photoUrls = walkInvitation.getPhotoUrls().stream().map(Photo::getPhotoUrl).toList();
 
-        return HomeDetailsResponseDto.builder()
+        return WalkInvitationDetailsResponseDto.builder()
                 .title(walkInvitation.getTitle())
                 .content(walkInvitation.getContent())
                 .latitude(walkInvitation.getLatitude())
                 .longitude(walkInvitation.getLongitude())
                 .detailedLocation(walkInvitation.getDetailedLocation())
-                .walkDate(walkInvitation.getWalkDate())
-                .walkTime(walkInvitation.getWalkTime())
+                .walkDateTime(walkInvitation.getWalkDateTime())
+                .walkingStatus(walkInvitation.getWalkingStatus())
                 .walkInvitationPhotoUrls(photoUrls)
                 .memberName(member.getName())
                 .memberPhotoUrl(member.getPhotoUrl())
@@ -51,7 +53,7 @@ public class HomeService {
                                      MultipartFile[] multipartFiles, PrincipalDetails principalDetails) {
 
         Member member = principalDetails.getMember();
-        List<WalkInvitation> walkInvitations = homeRepository.findAllByWriter(member);
+        List<WalkInvitation> walkInvitations = walkInvitationRepository.findAllByWriter(member);
 
         WalkInvitation walkInvitation = WalkInvitation.builder()
                 .writer(member)
@@ -60,13 +62,28 @@ public class HomeService {
                 .latitude(request.getLatitude())
                 .longitude(request.getLongitude())
                 .detailedLocation(request.getDetailedLocation())
-                .walkDate(request.getWalkDate())
-                .walkTime(request.getWalkTime())
-                .photoUrls(null) // photoUrl 구현 로직 추가 필요
+                .walkDateTime(request.getWalkDateTime())
+                .walkingStatus("산책 대기 중")
+                // photoUrl 구현 로직 추가 필요
+                // 예시 : List<String> photoUrls = photoService.getPhotoUrls(multipartFiles);
+                .photoUrls(null)
                 .build();
 
         walkInvitations.add(walkInvitation);
 
-        return homeRepository.save(walkInvitation).getId();
+        return walkInvitationRepository.save(walkInvitation).getId();
+    }
+
+    public List<HomePageResponseDto> getTodayHomePageLists(PrincipalDetails principalDetails) {
+        // principalDetails를 가져온 이유는, 자기 주위에 산책글을 보여주기 위함. 이후 로직추가
+
+        // 기본은 지금부터 내일 이 시간까지 walkInvitation만 가져오기
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime after24Hours = now.plusHours(24);
+
+        List<WalkInvitation> walkInvitations
+                = walkInvitationRepository.findAllByWalkDateTimeBetween(now, after24Hours);
+
+        return HomePageResponseDto.getListFrom(walkInvitations);
     }
 }
