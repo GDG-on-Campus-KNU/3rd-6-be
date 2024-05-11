@@ -33,8 +33,6 @@ public class PetService {
                 .photoUrl(request.photoUrl())
                 .description(request.description())
                 .likesCount(0)
-                .region(request.region())
-                .neighborhood(request.neighborhood())
                 .build();
 
         pet.setPetOwner(member);
@@ -47,6 +45,7 @@ public class PetService {
         // 예외처리
         Pet pet = petRepository.findById(id).orElseThrow();
 
+
         if (pet.getMember().getId().equals(principalDetails.getId())) {
             return PetResponseDto.builder()
                     .nickname(pet.getNickname())
@@ -54,8 +53,6 @@ public class PetService {
                     .age(pet.getAge())
                     .photoUrl(pet.getPhotoUrl())
                     .description(pet.getDescription())
-                    .region(pet.getRegion())
-                    .neighborhood(pet.getNeighborhood())
                     .build();
         }
         // 예외처리

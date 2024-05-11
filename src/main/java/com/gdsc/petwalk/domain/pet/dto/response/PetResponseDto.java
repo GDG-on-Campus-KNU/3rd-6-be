@@ -21,8 +21,6 @@ public record PetResponseDto(String nickname, String gender, Integer age, String
                     .age(pet.getAge())
                     .photoUrl(pet.getPhotoUrl())
                     .description(pet.getDescription())
-                    .region(pet.getRegion())
-                    .neighborhood(pet.getNeighborhood())
                     .build();
             result.add(petResponseDto);
         }

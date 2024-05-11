@@ -4,15 +4,11 @@ import com.gdsc.petwalk.auth.itself.dto.request.SignUpRequestDto;
 import com.gdsc.petwalk.domain.member.entity.Member;
 import com.gdsc.petwalk.domain.member.entity.Role;
 import com.gdsc.petwalk.domain.member.repository.MemberRepository;
-import com.gdsc.petwalk.domain.pet.dto.response.PetResponseDto;
-import com.gdsc.petwalk.domain.pet.entity.Pet;
-import com.gdsc.petwalk.global.principal.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,6 +18,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+
     public Member saveOrUpdate(Member member) {
         Optional<Member> optionalExistingMember = memberRepository.findByEmail(member.getEmail());
 

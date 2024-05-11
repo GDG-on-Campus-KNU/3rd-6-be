@@ -21,7 +21,7 @@ public class CustomJsonUserPasswordAuthenticationFilter extends AbstractAuthenti
 
     private final ObjectMapper objectMapper;
 
-    private static final String DEFAULT_LOGIN_REQUEST_URL = "/auth/login";
+    private static final String DEFAULT_LOGIN_REQUEST_URL = "/api/members/login";
     private static final String HTTP_METHOD = "POST";
     private static final String CONTENT_TYPE = "application/json";
     private static final AntPathRequestMatcher DEFAULT_LOGIN_REQUEST_MATCHER

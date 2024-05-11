@@ -1,5 +1,6 @@
 package com.gdsc.petwalk.auth.itself.handler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gdsc.petwalk.auth.jwt.service.JwtService;
 import com.gdsc.petwalk.global.principal.PrincipalDetails;
 import com.gdsc.petwalk.global.redis.service.RedisService;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -23,6 +26,8 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtService jwtService;
     private final RedisService redisService;
+    private final ObjectMapper objectMapper;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
@@ -36,10 +41,18 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         String refreshToken = jwtService.createRefreshToken();
         redisService.setRefreshToken(email, refreshToken);
 
+        Map<String, String> tokenMap = new HashMap<>();
+        tokenMap.put("accessToken", accessToken);
+        tokenMap.put("refreshToken", refreshToken);
 
-        response.setHeader("Accesstoken", accessToken);
-        response.addCookie(jwtService.createCookie("Authorization-refresh", refreshToken));
-        response.sendRedirect("http://localhost:3000");
+        String jsonResponse = objectMapper.writeValueAsString(tokenMap);
+
+        // JSON 형식의 응답을 설정하고 전송
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(jsonResponse);
+        response.getWriter().flush();
+        response.getWriter().close();
 
         log.info("자체 로그인에 성공하였습니다. 이메일 : {}",  email);
         log.info("자체 로그인에 성공하였습니다. Access Token : {}",  accessToken);

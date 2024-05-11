@@ -12,22 +12,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/auth")
+@RequestMapping("/api/members")
 @Slf4j
 public class AuthController {
 
     private final MemberService memberService;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<String> signUp(
-            @RequestBody SignUpRequestDto signUpRequest) {
+    public ResponseEntity<Long> signUp(
+            @RequestBody SignUpRequestDto request){
 
-        log.info("회원가입 컨트롤러");
-        memberService.signUp(signUpRequest);
+        Long savedId = memberService.signUp(request);
+        log.info("로그인 성공 id = {}", savedId);
 
-        return ResponseEntity.ok().body("회원가입 성공");
+        return ResponseEntity.ok().body(savedId);
     }
-
-
-
 }

@@ -37,6 +37,8 @@ public class SecurityConfig {
     private final CustomOauth2SuccessHandler customOauth2SuccessHandler;
     private final PasswordEncoder passwordEncoder;
     private final LoginService loginService;
+    private final ObjectMapper objectMapper;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return
@@ -48,7 +50,7 @@ public class SecurityConfig {
                         .authorizeHttpRequests((auth) -> auth
                                 .requestMatchers(new AntPathRequestMatcher("/error")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/login")).permitAll()
-                                .requestMatchers(new AntPathRequestMatcher("/auth/**")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/api/**")).permitAll()
                                 .anyRequest().authenticated()
                         )
                         .oauth2Login((oauth2) -> oauth2
@@ -71,7 +73,7 @@ public class SecurityConfig {
     @Bean
     public CustomJsonUserPasswordAuthenticationFilter customJsonUserPasswordAuthenticationFilter() {
         CustomJsonUserPasswordAuthenticationFilter customJsonUserPasswordAuthenticationFilter
-                = new CustomJsonUserPasswordAuthenticationFilter(objectMapper());
+                = new CustomJsonUserPasswordAuthenticationFilter(objectMapper);
 
         customJsonUserPasswordAuthenticationFilter.setAuthenticationManager(authenticationManager());
         customJsonUserPasswordAuthenticationFilter.setAuthenticationSuccessHandler(loginSuccessHandler);
@@ -79,10 +81,4 @@ public class SecurityConfig {
 
         return customJsonUserPasswordAuthenticationFilter;
     }
-
-    @Bean
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper();
-    }
-
 }
