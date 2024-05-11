@@ -6,6 +6,7 @@ import com.gdsc.petwalk.domain.chat.entity.Message;
 import com.gdsc.petwalk.domain.match.entity.Match;
 import com.gdsc.petwalk.domain.pet.entity.Pet;
 import com.gdsc.petwalk.domain.review.entity.Review;
+import com.gdsc.petwalk.domain.walkinvitation.entity.WalkInvitation;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -48,6 +49,9 @@ public class Member {
     @Column
     private String neighborhood; // 사용자의 동네 정보
 
+    @Column(name = "photo_url")
+    private String photoUrl;
+
     @Column(name = "refresh_token")
     private String refresh;
 
@@ -71,6 +75,9 @@ public class Member {
 
     @OneToMany(mappedBy = "commenter")
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer")
+    private List<WalkInvitation> walkInvitations = new ArrayList<>();
 
     @Builder
     public Member(Long id, String name, String email, String password, Role role, String refresh) {

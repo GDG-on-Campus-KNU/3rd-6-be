@@ -48,6 +48,9 @@ public class Pet {
     @Column(name = "likes_count", nullable = false)
     private Integer likesCount = 0;
 
+    private String dogType;
+
+
     @OneToMany(mappedBy = "pet")
     private List<Review> reviews = new ArrayList<>();
 
