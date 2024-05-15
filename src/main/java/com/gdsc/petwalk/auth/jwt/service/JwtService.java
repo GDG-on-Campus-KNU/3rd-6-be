@@ -2,6 +2,8 @@ package com.gdsc.petwalk.auth.jwt.service;
 
 import com.gdsc.petwalk.domain.member.entity.Member;
 import com.gdsc.petwalk.domain.member.repository.MemberRepository;
+import com.gdsc.petwalk.global.exception.ErrorCode;
+import com.gdsc.petwalk.global.exception.NotValidTokenException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
@@ -26,8 +28,9 @@ public class JwtService {
 
     @Value("${spring.jwt.secret}")
     private String secret;
-    private final Long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 60L;
+    private final Long ACCESS_TOKEN_EXPIRATION = 1000L * 60 * 60;
     private final Long REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 14L;
+
 
     private final MemberRepository memberRepository;
 
@@ -61,20 +64,27 @@ public class JwtService {
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT Token", e);
+            throw new NotValidTokenException(ErrorCode.NOT_VALID_TOKEN_EXCEPTION);
         } catch (ExpiredJwtException e) {
             log.info("Expired JWT Token", e);
+            if (isRefreshTokenExpired(e)) {
+                throw new NotValidTokenException(ErrorCode.EXPIRED_REFRESH_TOKEN_EXCEPTION);
+            }
+            throw new NotValidTokenException(ErrorCode.EXPIRED_ACCESS_TOKEN_EXCEPTION);
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT Token", e);
+            throw new NotValidTokenException(ErrorCode.UNSUPPORTED_TOKEN_EXCEPTION);
         } catch (IllegalArgumentException e) {
             log.info("JWT claims string is empty.", e);
+            throw new NotValidTokenException(ErrorCode.MISMATCH_CLAIMS_EXCEPTION);
         }
-        return false;
     }
 
     public String createAccessToken(String email, String role) {
         return Jwts.builder()
                 .claim("email", email)
                 .claim("role", role)
+                .claim("token_type", "access_token")
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION))
                 .signWith(secretKey)
@@ -83,6 +93,7 @@ public class JwtService {
 
     public String createRefreshToken() {
         return Jwts.builder()
+                .claim("token_type", "refresh_token")
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION))
                 .signWith(secretKey)
@@ -108,5 +119,9 @@ public class JwtService {
         cookie.setHttpOnly(true);
 
         return cookie;
+    }
+
+    private static boolean isRefreshTokenExpired(ExpiredJwtException e) {
+        return e.getClaims().get("token_type").equals("refresh_token");
     }
 }

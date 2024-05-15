@@ -3,6 +3,8 @@ package com.gdsc.petwalk.auth.jwt.filter;
 import com.gdsc.petwalk.auth.jwt.service.JwtService;
 import com.gdsc.petwalk.domain.member.entity.Member;
 import com.gdsc.petwalk.domain.member.service.MemberService;
+import com.gdsc.petwalk.global.exception.ErrorCode;
+import com.gdsc.petwalk.global.exception.NotValidTokenException;
 import com.gdsc.petwalk.global.principal.PrincipalDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -35,7 +37,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
 
         // 해당 경로로 시작하는 uri에 대해서는 filter를 거치지 않음
-        if (path.startsWith("/login") || path.startsWith("/oauth2")) {
+        if (path.startsWith("/login") || path.startsWith("/oauth2") || path.startsWith("/api/members")) {
             return true;
         }
 
@@ -50,12 +52,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         String accesstoken = request.getHeader("Accesstoken");
 
-        if(accesstoken == null){
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        if (accesstoken != null && jwtService.validateToken(accesstoken)) {
+        if (jwtService.validateToken(accesstoken)) {
             //JWT 토큰을 파싱해서 member 정보를 가져옴
             String email = jwtService.getEmail(accesstoken);
             Member member = memberService.findMemberByEmail(email);
