@@ -6,6 +6,7 @@ import com.gdsc.petwalk.auth.itself.handler.LoginFailureHandler;
 import com.gdsc.petwalk.auth.itself.handler.LoginSuccessHandler;
 import com.gdsc.petwalk.auth.itself.service.LoginService;
 import com.gdsc.petwalk.auth.jwt.filter.JwtAuthorizationFilter;
+import com.gdsc.petwalk.auth.jwt.filter.JwtExceptionHandlerFilter;
 import com.gdsc.petwalk.auth.jwt.service.JwtService;
 import com.gdsc.petwalk.auth.oauth2.handler.CustomOauth2SuccessHandler;
 import com.gdsc.petwalk.auth.oauth2.service.CustomOauth2UserService;
@@ -31,6 +32,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfig {
 
     private final JwtAuthorizationFilter jwtAuthorizationFilter;
+    private final JwtExceptionHandlerFilter jwtExceptionHandlerFilter;
     private final CustomOauth2UserService customOauth2UserService;
     private final LoginSuccessHandler loginSuccessHandler;
     private final LoginFailureHandler loginFailureHandler;
@@ -58,6 +60,7 @@ public class SecurityConfig {
                                 .successHandler(customOauth2SuccessHandler))
                         .addFilterAfter(customJsonUserPasswordAuthenticationFilter(), LogoutFilter.class)
                         .addFilterBefore(jwtAuthorizationFilter, CustomJsonUserPasswordAuthenticationFilter.class)
+                        .addFilterBefore(jwtExceptionHandlerFilter, JwtAuthorizationFilter.class)
                         .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                         .build();
     }
