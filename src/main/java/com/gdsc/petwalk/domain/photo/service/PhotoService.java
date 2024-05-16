@@ -19,27 +19,11 @@ public class PhotoService {
     private final PhotoRepository photoRepository;
     private final CloudStorageService cloudStorageService;
 
-    public List<String> getPhotoUrls(MultipartFile[] multipartFiles) {
-        List<String> photos = new ArrayList<>();
-
-        for (MultipartFile file : multipartFiles) {
-            String originalFilename = file.getOriginalFilename();
-            String uniqueFilename = UUID.randomUUID() + "_" + originalFilename;
-            String url = cloudStorageService.uploadFile(file, uniqueFilename);
-
-            photos.add(url);
-        }
-
-        return photos;
-    }
-
     public List<Photo> savePhotos(MultipartFile[] multipartFiles) {
         List<Photo> savedPhotos = new ArrayList<>();
 
         for (MultipartFile file : multipartFiles) {
-            String originalFilename = file.getOriginalFilename();
-            String uniqueFilename = UUID.randomUUID() + "_" + originalFilename;
-            String url = cloudStorageService.uploadFile(file, uniqueFilename);
+            String url = uploadAndGetUrl(file);
             Photo photo = Photo.builder()
                 .photoUrl(url)
                 .build();
@@ -48,5 +32,33 @@ public class PhotoService {
         }
 
         return savedPhotos;
+    }
+
+    public List<String> getPhotosByWalkInvitationId(Long walkInvitationId) {
+        List<Photo> photos = photoRepository.findByWalkInvitationId(walkInvitationId);
+        return photos.stream()
+            .map(Photo::getPhotoUrl)
+            .toList();
+    }
+
+    public void updatePhoto(Long photoId, MultipartFile newFile) {
+        Photo photo = photoRepository.findById(photoId).orElseThrow(() -> new RuntimeException("Photo not found"));
+        String oldUrl = photo.getPhotoUrl();
+        String newUrl = uploadAndGetUrl(newFile);
+        cloudStorageService.deleteFile(oldUrl);
+        photo.update(newUrl);
+        photoRepository.save(photo);
+    }
+
+    public void deletePhoto(Long photoId) {
+        Photo photo = photoRepository.findById(photoId).orElseThrow(() -> new RuntimeException("Photo not found"));
+        cloudStorageService.deleteFile(photo.getPhotoUrl());
+        photoRepository.deleteById(photoId);
+    }
+
+    private String uploadAndGetUrl(MultipartFile file) {
+        String originalFilename = file.getOriginalFilename();
+        String uniqueFilename = UUID.randomUUID() + "_" + originalFilename;
+        return cloudStorageService.uploadFile(file, uniqueFilename);
     }
 }

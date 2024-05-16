@@ -1,6 +1,7 @@
 package com.gdsc.petwalk.domain.walkinvitation.service;
 
 import com.gdsc.petwalk.domain.member.entity.Member;
+import com.gdsc.petwalk.domain.photo.entity.Photo;
 import com.gdsc.petwalk.domain.photo.service.PhotoService;
 import com.gdsc.petwalk.domain.walkinvitation.dto.request.WalkInvitaionCreateRequestDto;
 import com.gdsc.petwalk.domain.walkinvitation.dto.response.HomePageResponseDto;
@@ -52,7 +53,9 @@ public class WalkInvitationService {
 
         Member member = principalDetails.getMember();
         List<WalkInvitation> walkInvitations = walkInvitationRepository.findAllByWriter(member);
-        List<String> photoUrls = photoService.getPhotoUrls(multipartFiles);
+        List<String> photoUrls = photoService.savePhotos(multipartFiles).stream()
+            .map(Photo::getPhotoUrl)
+            .toList();
 
         WalkInvitation walkInvitation = WalkInvitation.builder()
             .writer(member)

@@ -22,6 +22,7 @@ public class CloudStorageServiceImpl implements CloudStorageService {
 
     public CloudStorageServiceImpl(@Value("${cloud.gcp.storage.bucket}") String bucketName) {
         this.bucketName = bucketName;
+        log.info("Cloud Storage 서비스가 {} 버킷으로 구성되었습니다.", bucketName);
     }
 
     @Override
@@ -33,14 +34,27 @@ public class CloudStorageServiceImpl implements CloudStorageService {
                 .build();
             storage.create(blobInfo, file.getBytes());
             String fileUrl = String.format("https://storage.googleapis.com/%s/%s", bucketName, fileName);
-            log.info("파일을 성공적으로 업로드했습니다.: {}", fileUrl);
+            log.info("파일 '{}'을(를) '{}' 버킷에 성공적으로 업로드했습니다. 접근 URL: {}", fileName, bucketName, fileUrl);
             return fileUrl;
         } catch (StorageException e) {
-            log.error("Storage 이슈로 인해 Google Cloud Storage에 파일을 업로드하지 못 했습니다.", e);
+            log.error("Google Cloud Storage에 파일 '{}'을(를) 업로드하는 동안 Storage 문제가 발생했습니다. 파일명: {}", fileName, e.getMessage());
             throw e;
         } catch (IOException e) {
-            log.error("IO 이슈로 인해 Google Cloud Storage에 파일을 업로드하지 못 했습니다.", e);
-            throw new RuntimeException("Google Cloud Storage에 파일을 업로드하지 못 했습니다.", e);
+            log.error("Google Cloud Storage에 파일 '{}'을(를) 업로드하는 동안 IO 문제가 발생했습니다. 파일명: {}", fileName, e.getMessage());
+            throw new RuntimeException("Google Cloud Storage에 파일을 업로드하지 못했습니다.", e);
+        }
+    }
+
+    @Override
+    public void deleteFile(String fileUrl) {
+        String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+        BlobId blobId = BlobId.of(bucketName, fileName);
+        boolean isDeleted = storage.delete(blobId);
+        if (isDeleted) {
+            log.info("파일 '{}'을(를) '{}' 버킷에서 성공적으로 삭제했습니다.", fileName, bucketName);
+        } else {
+            log.error("파일 '{}'을(를) '{}' 버킷에서 삭제하는데 실패했습니다.", fileName, bucketName);
+            throw new RuntimeException("파일을 삭제하지 못했습니다.");
         }
     }
 }

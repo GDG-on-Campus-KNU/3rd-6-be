@@ -31,4 +31,8 @@ public class Photo {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "walk_invitation_id")
     private WalkInvitation walkInvitation;
+
+    public void update(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
 }
