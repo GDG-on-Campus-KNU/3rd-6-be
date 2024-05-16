@@ -59,3 +59,9 @@ logging:
       descriptor:
         sql:
           BasicBinder: TRACE
+
+cloud:
+  gcp:
+    storage:
+      bucket: petwalk_bucket
+

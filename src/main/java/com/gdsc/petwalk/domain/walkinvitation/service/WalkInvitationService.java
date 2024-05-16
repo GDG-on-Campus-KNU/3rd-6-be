@@ -32,8 +32,9 @@ public class WalkInvitationService {
                 .orElseThrow(() -> new NoSuchElementException("WalkInvitaion이 없습니다"));
 
         Member member = walkInvitation.getWriter();
-        List<Photo> photos = walkInvitation.getPhotoUrls();
-        List<String> photoUrls = walkInvitation.getPhotoUrls().stream().map(Photo::getPhotoUrl).toList();
+        List<String> photoUrls = walkInvitation.getPhotoUrls().stream()
+            .map(Photo::getPhotoUrl)
+            .toList();
 
         return WalkInvitationDetailsResponseDto.builder()
                 .title(walkInvitation.getTitle())
@@ -50,29 +51,28 @@ public class WalkInvitationService {
     }
 
     public Long createWalkInvitation(WalkInvitaionCreateRequestDto request,
-                                     MultipartFile[] multipartFiles, PrincipalDetails principalDetails) {
+        MultipartFile[] multipartFiles, PrincipalDetails principalDetails) {
 
         Member member = principalDetails.getMember();
-        List<WalkInvitation> walkInvitations = walkInvitationRepository.findAllByWriter(member);
 
         WalkInvitation walkInvitation = WalkInvitation.builder()
-                .writer(member)
-                .title(request.getTitle())
-                .content(request.getContent())
-                .latitude(request.getLatitude())
-                .longitude(request.getLongitude())
-                .detailedLocation(request.getDetailedLocation())
-                .walkDateTime(request.getWalkDateTime())
-                .walkingStatus("산책 대기 중")
-                // photoUrl 구현 로직 추가 필요
-                // 예시 : List<String> photoUrls = photoService.getPhotoUrls(multipartFiles);
-                .photoUrls(null)
-                .build();
+            .writer(member)
+            .title(request.getTitle())
+            .content(request.getContent())
+            .latitude(request.getLatitude())
+            .longitude(request.getLongitude())
+            .detailedLocation(request.getDetailedLocation())
+            .walkDateTime(request.getWalkDateTime())
+            .walkingStatus("산책 대기 중")
+            .build();
 
-        walkInvitations.add(walkInvitation);
+        walkInvitation.setPhotoUrls(photoService.savePhotos(multipartFiles, walkInvitation));
 
-        return walkInvitationRepository.save(walkInvitation).getId();
+        walkInvitationRepository.save(walkInvitation);
+
+        return walkInvitation.getId();
     }
+
 
     public List<HomePageResponseDto> getTodayHomePageLists(PrincipalDetails principalDetails) {
         // principalDetails를 가져온 이유는, 자기 주위에 산책글을 보여주기 위함. 이후 로직추가
