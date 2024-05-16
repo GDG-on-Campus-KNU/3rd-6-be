@@ -36,9 +36,9 @@ public class CustomOauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         String refreshToken =  jwtService.createRefreshToken();
         redisService.setRefreshToken(email, refreshToken);
 
-        response.setHeader("Accesstoken", accessToken);
-        response.addCookie(jwtService.createCookie("Authorization-refresh", refreshToken));
-        response.sendRedirect("http://localhost:3000");
+        response.setHeader("Authorization", accessToken);
+        response.setHeader("Authorization-refresh", refreshToken);
+        // response.sendRedirect("http://localhost:3000");
 
         log.info("OAuth2 로그인에 성공하였습니다. 이메일 : {}",  oauth2User.getEmail());
         log.info("OAuth2 로그인에 성공하였습니다. Access Token : {}",  accessToken);

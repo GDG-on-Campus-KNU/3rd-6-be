@@ -42,8 +42,8 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         redisService.setRefreshToken(email, refreshToken);
 
         Map<String, String> tokenMap = new HashMap<>();
-        tokenMap.put("accessToken", accessToken);
-        tokenMap.put("refreshToken", refreshToken);
+        tokenMap.put("Authorization", accessToken);
+        tokenMap.put("Authorization-refresh", refreshToken);
 
         String jsonResponse = objectMapper.writeValueAsString(tokenMap);
 

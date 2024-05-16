@@ -50,7 +50,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        String accesstoken = request.getHeader("Accesstoken");
+        String accesstoken = request.getHeader("Authorization");
 
         if (jwtService.validateToken(accesstoken)) {
             //JWT 토큰을 파싱해서 member 정보를 가져옴
