@@ -1,7 +1,6 @@
 package com.gdsc.petwalk.domain.walkinvitation.service;
 
 import com.gdsc.petwalk.domain.member.entity.Member;
-import com.gdsc.petwalk.domain.photo.entity.Photo;
 import com.gdsc.petwalk.domain.photo.service.PhotoService;
 import com.gdsc.petwalk.domain.walkinvitation.dto.request.WalkInvitaionCreateRequestDto;
 import com.gdsc.petwalk.domain.walkinvitation.dto.response.HomePageResponseDto;
@@ -32,8 +31,7 @@ public class WalkInvitationService {
                 .orElseThrow(() -> new NoSuchElementException("WalkInvitaion이 없습니다"));
 
         Member member = walkInvitation.getWriter();
-        List<Photo> photos = walkInvitation.getPhotoUrls();
-        List<String> photoUrls = walkInvitation.getPhotoUrls().stream().map(Photo::getPhotoUrl).toList();
+        List<String> photoUrls = walkInvitation.getPhotoUrls();
 
         return WalkInvitationDetailsResponseDto.builder()
                 .title(walkInvitation.getTitle())
@@ -54,20 +52,19 @@ public class WalkInvitationService {
 
         Member member = principalDetails.getMember();
         List<WalkInvitation> walkInvitations = walkInvitationRepository.findAllByWriter(member);
+        List<String> photoUrls = photoService.getPhotoUrls(multipartFiles);
 
         WalkInvitation walkInvitation = WalkInvitation.builder()
-                .writer(member)
-                .title(request.getTitle())
-                .content(request.getContent())
-                .latitude(request.getLatitude())
-                .longitude(request.getLongitude())
-                .detailedLocation(request.getDetailedLocation())
-                .walkDateTime(request.getWalkDateTime())
-                .walkingStatus("산책 대기 중")
-                // photoUrl 구현 로직 추가 필요
-                // 예시 : List<String> photoUrls = photoService.getPhotoUrls(multipartFiles);
-                .photoUrls(null)
-                .build();
+            .writer(member)
+            .title(request.getTitle())
+            .content(request.getContent())
+            .latitude(request.getLatitude())
+            .longitude(request.getLongitude())
+            .detailedLocation(request.getDetailedLocation())
+            .walkDateTime(request.getWalkDateTime())
+            .walkingStatus("산책 대기 중")
+            .photoUrls(photoUrls)
+            .build();
 
         walkInvitations.add(walkInvitation);
 
