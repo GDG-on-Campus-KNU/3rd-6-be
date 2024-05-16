@@ -32,7 +32,9 @@ public class WalkInvitationService {
                 .orElseThrow(() -> new NoSuchElementException("WalkInvitaion이 없습니다"));
 
         Member member = walkInvitation.getWriter();
-        List<String> photoUrls = walkInvitation.getPhotoUrls();
+        List<String> photoUrls = walkInvitation.getPhotoUrls().stream()
+            .map(Photo::getPhotoUrl)
+            .toList();
 
         return WalkInvitationDetailsResponseDto.builder()
                 .title(walkInvitation.getTitle())
@@ -49,13 +51,9 @@ public class WalkInvitationService {
     }
 
     public Long createWalkInvitation(WalkInvitaionCreateRequestDto request,
-                                     MultipartFile[] multipartFiles, PrincipalDetails principalDetails) {
+        MultipartFile[] multipartFiles, PrincipalDetails principalDetails) {
 
         Member member = principalDetails.getMember();
-        List<WalkInvitation> walkInvitations = walkInvitationRepository.findAllByWriter(member);
-        List<String> photoUrls = photoService.savePhotos(multipartFiles).stream()
-            .map(Photo::getPhotoUrl)
-            .toList();
 
         WalkInvitation walkInvitation = WalkInvitation.builder()
             .writer(member)
@@ -66,13 +64,15 @@ public class WalkInvitationService {
             .detailedLocation(request.getDetailedLocation())
             .walkDateTime(request.getWalkDateTime())
             .walkingStatus("산책 대기 중")
-            .photoUrls(photoUrls)
             .build();
 
-        walkInvitations.add(walkInvitation);
+        walkInvitation.setPhotoUrls(photoService.savePhotos(multipartFiles, walkInvitation));
 
-        return walkInvitationRepository.save(walkInvitation).getId();
+        walkInvitationRepository.save(walkInvitation);
+
+        return walkInvitation.getId();
     }
+
 
     public List<HomePageResponseDto> getTodayHomePageLists(PrincipalDetails principalDetails) {
         // principalDetails를 가져온 이유는, 자기 주위에 산책글을 보여주기 위함. 이후 로직추가

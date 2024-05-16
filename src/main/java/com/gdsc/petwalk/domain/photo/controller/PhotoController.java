@@ -19,19 +19,6 @@ public class PhotoController {
 
     private final PhotoService photoService;
 
-    @PostMapping("/upload")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<String>> uploadPhotos(@RequestPart("photos") MultipartFile[] files) {
-        try {
-            List<String> photoUrls = photoService.savePhotos(files).stream()
-                .map(Photo::getPhotoUrl)
-                .toList();
-            return ResponseEntity.ok(photoUrls);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "사진을 업로드할 수 없습니다.", e);
-        }
-    }
-
     @GetMapping("/walkInvitation/{walkInvitationId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<String>> getPhotosByWalkInvitation(@PathVariable Long walkInvitationId) {

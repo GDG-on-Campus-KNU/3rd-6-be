@@ -2,6 +2,7 @@ package com.gdsc.petwalk.domain.photo.service;
 
 import com.gdsc.petwalk.domain.photo.entity.Photo;
 import com.gdsc.petwalk.domain.photo.repository.PhotoRepository;
+import com.gdsc.petwalk.domain.walkinvitation.entity.WalkInvitation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,13 +20,14 @@ public class PhotoService {
     private final PhotoRepository photoRepository;
     private final CloudStorageService cloudStorageService;
 
-    public List<Photo> savePhotos(MultipartFile[] multipartFiles) {
+    public List<Photo> savePhotos(MultipartFile[] multipartFiles, WalkInvitation walkInvitation) {
         List<Photo> savedPhotos = new ArrayList<>();
 
         for (MultipartFile file : multipartFiles) {
             String url = uploadAndGetUrl(file);
             Photo photo = Photo.builder()
                 .photoUrl(url)
+                .walkInvitation(walkInvitation)
                 .build();
 
             savedPhotos.add(photoRepository.save(photo));
@@ -56,7 +58,7 @@ public class PhotoService {
         photoRepository.deleteById(photoId);
     }
 
-    private String uploadAndGetUrl(MultipartFile file) {
+    public String uploadAndGetUrl(MultipartFile file) {
         String originalFilename = file.getOriginalFilename();
         String uniqueFilename = UUID.randomUUID() + "_" + originalFilename;
         return cloudStorageService.uploadFile(file, uniqueFilename);
