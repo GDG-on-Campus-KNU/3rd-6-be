@@ -1,6 +1,7 @@
 package com.gdsc.petwalk.auth.oauth2.handler;
 
 import com.gdsc.petwalk.auth.jwt.service.JwtService;
+import com.gdsc.petwalk.domain.member.service.MemberService;
 import com.gdsc.petwalk.global.principal.PrincipalDetails;
 import com.gdsc.petwalk.global.redis.service.RedisService;
 import jakarta.servlet.ServletException;
@@ -23,6 +24,7 @@ public class CustomOauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
     private final JwtService jwtService;
     private final RedisService redisService;
+    private final MemberService memberService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -34,7 +36,9 @@ public class CustomOauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
         String accessToken = jwtService.createAccessToken(email, role);
         String refreshToken =  jwtService.createRefreshToken();
-        redisService.setRefreshToken(email, refreshToken);
+        String savedRefresh = memberService.saveRefresh(email, refreshToken);
+
+        // redisService.setRefreshToken(email, refreshToken);
 
         response.setHeader("Authorization", accessToken);
         response.setHeader("Authorization-refresh", refreshToken);
@@ -43,6 +47,7 @@ public class CustomOauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         log.info("OAuth2 로그인에 성공하였습니다. 이메일 : {}",  oauth2User.getEmail());
         log.info("OAuth2 로그인에 성공하였습니다. Access Token : {}",  accessToken);
         log.info("OAuth2 로그인에 성공하였습니다. Refresh Token : {}",  refreshToken);
-        log.info("Redis에 저장된 RefreshToken : {}", redisService.getRefreshToken(email));
+        log.info("DB에 저장된 Refresh Token : {}",  savedRefresh);
+        // log.info("Redis에 저장된 RefreshToken : {}", redisService.getRefreshToken(email));
     }
 }

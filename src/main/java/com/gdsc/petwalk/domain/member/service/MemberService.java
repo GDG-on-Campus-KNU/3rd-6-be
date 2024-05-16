@@ -59,4 +59,15 @@ public class MemberService {
         return member;
     }
 
+    public String saveRefresh(String email, String refreshToken){
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow();
+
+        member.updateRefreshToken(refreshToken);
+
+        memberRepository.save(member);
+
+        return member.getRefresh();
+    }
+
 }
