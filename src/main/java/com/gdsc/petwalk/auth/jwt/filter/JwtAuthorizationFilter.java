@@ -37,7 +37,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
 
         // 해당 경로로 시작하는 uri에 대해서는 filter를 거치지 않음
-        if (path.startsWith("/login") || path.startsWith("/oauth2") || path.startsWith("/api/members")) {
+        if (path.startsWith("/login") || path.startsWith("/oauth2") || path.startsWith("/api")) {
             return true;
         }
 
