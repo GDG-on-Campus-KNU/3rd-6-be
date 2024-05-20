@@ -8,7 +8,7 @@ import java.util.List;
 
 @Builder
 public record PetResponseDto(String nickname, String gender, Integer age, String photoUrl,
-                             String description, String region, String neighborhood) {
+                             String description, String dogType) {
 
     public static List<PetResponseDto> makeFrom(List<Pet> pets){
 
@@ -21,6 +21,7 @@ public record PetResponseDto(String nickname, String gender, Integer age, String
                     .age(pet.getAge())
                     .photoUrl(pet.getPhotoUrl())
                     .description(pet.getDescription())
+                    .dogType(pet.getDogType())
                     .build();
             result.add(petResponseDto);
         }

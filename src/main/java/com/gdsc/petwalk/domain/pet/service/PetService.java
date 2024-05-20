@@ -32,6 +32,7 @@ public class PetService {
                 .age(request.age())
                 .photoUrl(request.photoUrl())
                 .description(request.description())
+                .dogType(request.dogType())
                 .likesCount(0)
                 .build();
 
@@ -44,7 +45,6 @@ public class PetService {
     public PetResponseDto findMyPet(PrincipalDetails principalDetails, Long id) {
         // 예외처리
         Pet pet = petRepository.findById(id).orElseThrow();
-
 
         if (pet.getMember().getId().equals(principalDetails.getId())) {
             return PetResponseDto.builder()
