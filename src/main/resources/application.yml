@@ -63,5 +63,4 @@ logging:
 cloud:
   gcp:
     storage:
-      bucket: petwalk_bucket
-
+      bucket: petwalk-bucket

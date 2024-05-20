@@ -33,17 +33,19 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         // filter를 거치고 싶지 않은 path를 여기서 관리함
         String[] excludePathLists = {"/favicon.ico"};
+        String[] excludePathStartsWithLists = {"/login", "/oauth2", "/api/members", "/v3", "/swagger-ui"};
 
         String path = request.getRequestURI();
 
-        // 해당 경로로 시작하는 uri에 대해서는 filter를 거치지 않음
-        if (path.startsWith("/login") || path.startsWith("/oauth2") || path.startsWith("/api")) {
-            return true;
-        }
+        // 해당 경로로 시작하는 uri에 대해서는 true를 반환하고 filter를 거치지 않음
+        boolean startsWithExcludedPath = Arrays.stream(excludePathStartsWithLists).
+                anyMatch((excludePath) -> path.startsWith(excludePath));
 
         // excludePathLists과 같은 uri로 매칭되면 true를 반환하고 filter를 거치지않음.
-        return Arrays.stream(excludePathLists)
+        boolean matchesExcludedPath = Arrays.stream(excludePathLists)
                 .anyMatch((excludePath) -> excludePath.equals(path));
+
+        return startsWithExcludedPath || matchesExcludedPath;
     }
 
     @Override

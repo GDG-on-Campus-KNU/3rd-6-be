@@ -12,6 +12,7 @@ import com.gdsc.petwalk.auth.oauth2.handler.CustomOauth2SuccessHandler;
 import com.gdsc.petwalk.auth.oauth2.service.CustomOauth2UserService;
 import com.gdsc.petwalk.global.redis.service.RedisService;
 import lombok.RequiredArgsConstructor;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -57,7 +58,9 @@ public class SecurityConfig {
                         .authorizeHttpRequests((auth) -> auth
                                 .requestMatchers(new AntPathRequestMatcher("/error")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/login")).permitAll()
-                                .requestMatchers(new AntPathRequestMatcher("/api/**")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/api/members")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/v3/**")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).permitAll()
                                 .anyRequest().authenticated()
                         )
                         .oauth2Login((oauth2) -> oauth2
