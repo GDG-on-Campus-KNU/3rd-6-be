@@ -46,8 +46,11 @@ public class Member {
     @Column(name = "role")
     private Role role; // 사용자의 역할
 
-    @Column
-    private String neighborhood; // 사용자의 동네 정보
+    @Column(nullable = false)
+    private double latitude; // 위도
+
+    @Column(nullable = false)
+    private double longitude; //경도
 
     @Column(name = "photo_url")
     private String photoUrl;
@@ -80,13 +83,24 @@ public class Member {
     private List<WalkInvitation> walkInvitations = new ArrayList<>();
 
     @Builder
-    public Member(Long id, String name, String email, String password, Role role, String refresh) {
+    public Member(Long id, String name, String email, String password, Role role, double latitude, double longitude, String photoUrl, String refresh, List<Pet> pets, List<Match> requestMatches, List<Match> acceptMatches, List<Review> reviews, List<Message> messages, List<Board> boards, List<Comment> comments, List<WalkInvitation> walkInvitations) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.photoUrl = photoUrl;
         this.refresh = refresh;
+        this.pets = pets;
+        this.requestMatches = requestMatches;
+        this.acceptMatches = acceptMatches;
+        this.reviews = reviews;
+        this.messages = messages;
+        this.boards = boards;
+        this.comments = comments;
+        this.walkInvitations = walkInvitations;
     }
 
     public void updateMember(Member member) {

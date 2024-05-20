@@ -45,17 +45,17 @@ public class Pet {
 
     private String description;
 
-    @Column(name = "likes_count", nullable = false)
-    private Integer likesCount = 0;
-
+    @Column(name = "dog_type")
     private String dogType;
 
+    @Column(name = "likes_count", nullable = false)
+    private Integer likesCount = 0;
 
     @OneToMany(mappedBy = "pet")
     private List<Review> reviews = new ArrayList<>();
 
     @Builder
-    public Pet(Long id, Member member, String nickname, String gender, Integer age, String photoUrl, String description, Integer likesCount, List<Review> reviews) {
+    public Pet(Long id, Member member, String nickname, String gender, Integer age, String photoUrl, String description, Integer likesCount, String dogType, List<Review> reviews) {
         this.id = id;
         this.member = member;
         this.nickname = nickname;
@@ -64,9 +64,9 @@ public class Pet {
         this.photoUrl = photoUrl;
         this.description = description;
         this.likesCount = likesCount;
+        this.dogType = dogType;
         this.reviews = reviews;
     }
-
 
     public void setPetOwner(Member member) {
         this.member = member;
