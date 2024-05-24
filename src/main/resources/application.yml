@@ -24,7 +24,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     properties:
       hibernate:
         show_sql: true
@@ -33,9 +33,9 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/petwalk?autoReconnect=true&useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://34.170.106.101:3306/petwalk?autoReconnect=true&useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
-    password: ${LOCAL_DB_PASSWORD}
+    password: ${DB_PASSWORD}
 
   jwt:
     secret: ${JWT_SECRET}
@@ -64,3 +64,11 @@ cloud:
   gcp:
     storage:
       bucket: petwalk-bucket
+
+springdoc:
+  override-with-generic-response: true
+  default-consumes-media-type: application/json # 소비 미디어 타입
+  default-produces-media-type: application/json # 생산 미디어 타입
+  swagger-ui:
+    operations-sorter: method # operations 정렬 방식은 HTTP Method 순
+    tags-sorter: alpha # tag 정렬 방식은 알파벳 순

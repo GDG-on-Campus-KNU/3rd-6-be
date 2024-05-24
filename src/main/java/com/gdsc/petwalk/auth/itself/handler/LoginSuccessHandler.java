@@ -2,6 +2,7 @@ package com.gdsc.petwalk.auth.itself.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gdsc.petwalk.auth.jwt.service.JwtService;
+import com.gdsc.petwalk.domain.member.service.MemberService;
 import com.gdsc.petwalk.global.principal.PrincipalDetails;
 import com.gdsc.petwalk.global.redis.service.RedisService;
 import jakarta.servlet.ServletException;
@@ -24,6 +25,7 @@ import java.util.Map;
 @Slf4j
 public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
+    private final MemberService memberService;
     private final JwtService jwtService;
     private final RedisService redisService;
     private final ObjectMapper objectMapper;
@@ -39,7 +41,9 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
         String accessToken = jwtService.createAccessToken(email, role);
         String refreshToken = jwtService.createRefreshToken();
-        redisService.setRefreshToken(email, refreshToken);
+        String savedRefresh = memberService.saveRefresh(email, refreshToken);
+
+        // redisService.setRefreshToken(email, refreshToken);
 
         Map<String, String> tokenMap = new HashMap<>();
         tokenMap.put("Authorization", accessToken);
@@ -57,6 +61,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         log.info("자체 로그인에 성공하였습니다. 이메일 : {}",  email);
         log.info("자체 로그인에 성공하였습니다. Access Token : {}",  accessToken);
         log.info("자체 로그인에 성공하였습니다. Refresh Token : {}",  refreshToken);
-        log.info("Redis에 저장된 RefreshToken : {}", redisService.getRefreshToken(email));
+        log.info("DB에 저장된 Refresh Token : {}",  savedRefresh);
+        // log.info("Redis에 저장된 RefreshToken : {}", redisService.getRefreshToken(email));
     }
 }
