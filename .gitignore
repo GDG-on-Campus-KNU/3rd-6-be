@@ -39,8 +39,5 @@ out/
 # Ignore .DS_Store files
 .DS_Store
 
-# Ignore DockerFile
-Dockerfile
-
 # Ignore key file
 src/main/resources/mindful-rhythm-423909-b8-cc2178f31cf2.json
