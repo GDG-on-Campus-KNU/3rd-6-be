@@ -1,7 +1,7 @@
 package com.gdsc.petwalk.auth.jwt.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gdsc.petwalk.global.exception.NotValidTokenException;
+import com.gdsc.petwalk.global.exception.custom.NotValidTokenException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -3,7 +3,7 @@ package com.gdsc.petwalk.auth.jwt.service;
 import com.gdsc.petwalk.domain.member.entity.Member;
 import com.gdsc.petwalk.domain.member.repository.MemberRepository;
 import com.gdsc.petwalk.global.exception.ErrorCode;
-import com.gdsc.petwalk.global.exception.NotValidTokenException;
+import com.gdsc.petwalk.global.exception.custom.NotValidTokenException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;

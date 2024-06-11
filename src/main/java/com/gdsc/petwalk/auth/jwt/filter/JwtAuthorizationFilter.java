@@ -3,8 +3,6 @@ package com.gdsc.petwalk.auth.jwt.filter;
 import com.gdsc.petwalk.auth.jwt.service.JwtService;
 import com.gdsc.petwalk.domain.member.entity.Member;
 import com.gdsc.petwalk.domain.member.service.MemberService;
-import com.gdsc.petwalk.global.exception.ErrorCode;
-import com.gdsc.petwalk.global.exception.NotValidTokenException;
 import com.gdsc.petwalk.global.principal.PrincipalDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

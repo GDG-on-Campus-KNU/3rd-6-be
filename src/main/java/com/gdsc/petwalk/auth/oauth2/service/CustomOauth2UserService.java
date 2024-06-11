@@ -29,7 +29,6 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
         Oauth2Response oauth2Response = getOauth2Response(registrationId, oAuth2User);
 
         Member member = memberService.saveOrUpdate(Member.builder()
-                .name(oauth2Response.getName())
                 .email(oauth2Response.getEmail())
                 .role(Role.ROLE_USER)
                 .build());

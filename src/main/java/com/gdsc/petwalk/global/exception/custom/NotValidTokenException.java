@@ -1,5 +1,6 @@
-package com.gdsc.petwalk.global.exception;
+package com.gdsc.petwalk.global.exception.custom;
 
+import com.gdsc.petwalk.global.exception.ErrorCode;
 import lombok.Getter;
 
 @Getter

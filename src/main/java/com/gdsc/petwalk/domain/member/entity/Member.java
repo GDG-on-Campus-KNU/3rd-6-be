@@ -1,5 +1,6 @@
 package com.gdsc.petwalk.domain.member.entity;
 
+import com.gdsc.petwalk.auth.itself.dto.request.ProfileRequestDto;
 import com.gdsc.petwalk.domain.board.entity.Board;
 import com.gdsc.petwalk.domain.board.entity.Comment;
 import com.gdsc.petwalk.domain.chat.entity.Message;
@@ -33,8 +34,8 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
-    @Column(name = "name")
-    private String name; // 사용자 이름
+    @Column(name = "nick_name")
+    private String nickName; // 사용자 이름
 
     @Column(name = "email")
     private String email;
@@ -83,9 +84,9 @@ public class Member {
     private List<WalkInvitation> walkInvitations = new ArrayList<>();
 
     @Builder
-    public Member(Long id, String name, String email, String password, Role role, double latitude, double longitude, String photoUrl, String refresh, List<Pet> pets, List<Match> requestMatches, List<Match> acceptMatches, List<Review> reviews, List<Message> messages, List<Board> boards, List<Comment> comments, List<WalkInvitation> walkInvitations) {
+    public Member(Long id, String nickName, String email, String password, Role role, double latitude, double longitude, String photoUrl, String refresh, List<Pet> pets, List<Match> requestMatches, List<Match> acceptMatches, List<Review> reviews, List<Message> messages, List<Board> boards, List<Comment> comments, List<WalkInvitation> walkInvitations) {
         this.id = id;
-        this.name = name;
+        this.nickName = nickName;
         this.email = email;
         this.password = password;
         this.role = role;
@@ -108,13 +109,20 @@ public class Member {
             this.email = member.getEmail();
         }
 
-        if (member.getName() != null) {
-            this.name = member.getName();
+        if (member.getNickName() != null) {
+            this.nickName = member.getNickName();
         }
 
         if (member.getRole() != null) {
             this.role = member.getRole();
         }
+    }
+
+    public void setProfile(ProfileRequestDto profileRequestDto, String photoUrl){
+        this.nickName = profileRequestDto.nickName();
+        this.latitude = profileRequestDto.latitude();
+        this.longitude = profileRequestDto.longitude();
+        this.photoUrl = photoUrl;
     }
 
     public void updateRefreshToken(String refresh) {

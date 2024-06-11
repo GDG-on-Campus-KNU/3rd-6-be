@@ -1,6 +1,8 @@
 package com.gdsc.petwalk.auth.itself.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gdsc.petwalk.auth.itself.dto.response.AuthResultDto;
+import com.gdsc.petwalk.auth.itself.dto.response.TokenResponseDto;
 import com.gdsc.petwalk.auth.jwt.service.JwtService;
 import com.gdsc.petwalk.domain.member.service.MemberService;
 import com.gdsc.petwalk.global.principal.PrincipalDetails;
@@ -8,6 +10,9 @@ import com.gdsc.petwalk.global.redis.service.RedisService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -45,11 +50,15 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
         // redisService.setRefreshToken(email, refreshToken);
 
-        Map<String, String> tokenMap = new HashMap<>();
-        tokenMap.put("Authorization", accessToken);
-        tokenMap.put("Authorization-refresh", refreshToken);
-
-        String jsonResponse = objectMapper.writeValueAsString(tokenMap);
+        String jsonResponse = objectMapper.writeValueAsString(AuthResultDto.builder()
+                .status(true)
+                .code(200)
+                .message("로그인 성공!")
+                .data(TokenResponseDto.builder()
+                        .accessToken(accessToken)
+                        .refreshToken(refreshToken)
+                        .build())
+                .build());
 
         // JSON 형식의 응답을 설정하고 전송
         response.setContentType("application/json");
@@ -58,10 +67,10 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         response.getWriter().flush();
         response.getWriter().close();
 
-        log.info("자체 로그인에 성공하였습니다. 이메일 : {}",  email);
-        log.info("자체 로그인에 성공하였습니다. Access Token : {}",  accessToken);
-        log.info("자체 로그인에 성공하였습니다. Refresh Token : {}",  refreshToken);
-        log.info("DB에 저장된 Refresh Token : {}",  savedRefresh);
+        log.info("자체 로그인에 성공하였습니다. 이메일 : {}", email);
+        log.info("자체 로그인에 성공하였습니다. Access Token : {}", accessToken);
+        log.info("자체 로그인에 성공하였습니다. Refresh Token : {}", refreshToken);
+        log.info("DB에 저장된 Refresh Token : {}", savedRefresh);
         // log.info("Redis에 저장된 RefreshToken : {}", redisService.getRefreshToken(email));
     }
 }

@@ -45,7 +45,7 @@ public class WalkInvitationService {
                 .walkDateTime(walkInvitation.getWalkDateTime())
                 .walkingStatus(walkInvitation.getWalkingStatus())
                 .walkInvitationPhotoUrls(photoUrls)
-                .memberName(member.getName())
+                .memberName(member.getNickName())
                 .memberPhotoUrl(member.getPhotoUrl())
                 .build();
     }

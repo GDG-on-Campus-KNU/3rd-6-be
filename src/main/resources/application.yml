@@ -24,7 +24,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
     properties:
       hibernate:
         show_sql: true
@@ -33,9 +33,9 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://34.170.106.101:3306/petwalk?autoReconnect=true&useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/petwalk?autoReconnect=true&useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
-    password: ${DB_PASSWORD}
+    password: ${LOCAL_DB_PASSWORD}
 
   jwt:
     secret: ${JWT_SECRET}
