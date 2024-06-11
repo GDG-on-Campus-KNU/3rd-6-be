@@ -61,13 +61,17 @@ jobs:
       - name: Deploy to Instance
         uses: appleboy/ssh-action@v1.0.3     #가장 최신 버젼 appleboy 사용
         with:
-          host: ${{secrets.GCP_HOST}}
-          username: ${{secrets.GCP_USERNAME}}
-          key: ${{secrets.GCP_PRIVATEKEY}}  
+          host: ${{ secrets.GCP_HOST }}
+          username: ${{ secrets.GCP_USERNAME }}
+          key: ${{ secrets.GCP_PRIVATE_KEY }}  
           passphrase : ${{ secrets.GCP_KEY_PASSPHRASE }}
           script: |
             sudo su
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-            docker pull ${{secrets.DOCKER_USERNAME}}/petwalk
-            docker run --name petwalk-backend -d -p 8080:8080 helloaway/petwalk
+            if [ $(docker ps -q -f name=petwalk-backend) ]; then
+              docker stop petwalk-backend
+              docker rm petwalk-backend
+            fi
+            docker pull ${{ secrets.DOCKER_USERNAME }}/petwalk
+            docker run --name petwalk-backend -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/petwalk
             docker image prune -f
