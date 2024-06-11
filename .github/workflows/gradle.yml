@@ -6,6 +6,8 @@ name: CI/CD using github actions & docker
 on:
   push:
     branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "develop" ]
 
 permissions:
   contents: read
