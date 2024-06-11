@@ -64,6 +64,7 @@ jobs:
           host: ${{secrets.GCP_HOST}}
           username: ${{secrets.GCP_USERNAME}}
           key: ${{secrets.GCP_PRIVATEKEY}}  
+          passphrase : ${{ secrets.GCP_KEY_PASSPHRASE }}
           script: |
             sudo su
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
