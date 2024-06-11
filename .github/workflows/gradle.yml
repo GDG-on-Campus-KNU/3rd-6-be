@@ -67,10 +67,8 @@ jobs:
           passphrase : ${{ secrets.GCP_KEY_PASSPHRASE }}
           script: |
             sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-            if [ $(docker ps -q -f name=petwalk-backend) ]; then
-              sudo docker stop petwalk-backend
-              sudo docker rm petwalk-backend
-            fi
+            sudo docker stop petwalk-backend
+            sudo docker rm petwalk-backend
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/petwalk
             sudo docker run --name petwalk-backend -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/petwalk
             sudo docker image prune -f
