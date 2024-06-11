@@ -7,6 +7,6 @@ import lombok.Data;
 @Builder
 @Data
 public class TokenResponseDto {
-    private String Authorization;
-    private String AuthorizationRefresh;
+    private String accessToken;
+    private String refreshToken;
 }

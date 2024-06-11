@@ -1,5 +1,6 @@
 package com.gdsc.petwalk.domain.photo.entity;
 
+import com.gdsc.petwalk.domain.board.entity.Board;
 import com.gdsc.petwalk.domain.walkinvitation.entity.WalkInvitation;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,6 +32,10 @@ public class Photo {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "walk_invitation_id")
     private WalkInvitation walkInvitation;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "board_id")
+    private Board board;
 
     public void update(String photoUrl) {
         this.photoUrl = photoUrl;

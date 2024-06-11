@@ -1,6 +1,7 @@
 package com.gdsc.petwalk.domain.board.entity;
 
 import com.gdsc.petwalk.domain.member.entity.Member;
+import com.gdsc.petwalk.domain.photo.entity.Photo;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
