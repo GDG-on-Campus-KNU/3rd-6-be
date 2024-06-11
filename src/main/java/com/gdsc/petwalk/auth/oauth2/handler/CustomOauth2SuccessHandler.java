@@ -38,7 +38,6 @@ public class CustomOauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         String refreshToken =  jwtService.createRefreshToken();
         String savedRefresh = memberService.saveRefresh(email, refreshToken);
 
-
         // redisService.setRefreshToken(email, refreshToken);
 
         response.setHeader("Authorization", accessToken);

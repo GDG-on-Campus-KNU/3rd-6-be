@@ -47,10 +47,10 @@ public class Member {
     @Column(name = "role")
     private Role role; // 사용자의 역할
 
-    @Column(nullable = false)
+    @Column
     private double latitude; // 위도
 
-    @Column(nullable = false)
+    @Column
     private double longitude; //경도
 
     @Column(name = "photo_url")
