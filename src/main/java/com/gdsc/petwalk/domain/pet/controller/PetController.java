@@ -9,6 +9,8 @@ import com.gdsc.petwalk.domain.pet.entity.Pet;
 import com.gdsc.petwalk.domain.pet.service.PetService;
 import com.gdsc.petwalk.global.principal.PrincipalDetails;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +43,7 @@ public class PetController {
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "회원가입 후 펫 생성 로직", description = "회원가입 후 펫 생성 로직")
     @ApiResponse(responseCode = "200", description = "회원가입 후 펫 생성, 성공 시 등록 펫 id 값 반환")
+    @Parameter(description = "ex) Bearer eyzaqwd...", name = "Authorization", in = ParameterIn.HEADER)
     public ResponseEntity<PetResultDto<Long>> createPet(
             @RequestPart("petCreateRequestDto") PetCreateRequestDto petCreateRequestDto,
             @RequestPart("uploadPhoto") MultipartFile file,
