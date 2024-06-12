@@ -19,7 +19,7 @@ public record PetResponseDto(String nickname, String gender, Integer age, String
                     .nickname(pet.getNickname())
                     .gender(pet.getGender())
                     .age(pet.getAge())
-                    .photoUrl(pet.getPhotoUrl())
+                    .photoUrl(pet.getPhotos().get(0).getPhotoUrl())
                     .description(pet.getDescription())
                     .dogType(pet.getDogType())
                     .build();

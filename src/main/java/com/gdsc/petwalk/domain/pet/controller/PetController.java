@@ -4,9 +4,12 @@ import com.gdsc.petwalk.domain.member.entity.Member;
 import com.gdsc.petwalk.domain.pet.dto.request.PetCreateRequestDto;
 import com.gdsc.petwalk.domain.pet.dto.request.PetUpdateRequestDto;
 import com.gdsc.petwalk.domain.pet.dto.response.PetResponseDto;
+import com.gdsc.petwalk.domain.pet.dto.response.PetResultDto;
 import com.gdsc.petwalk.domain.pet.entity.Pet;
 import com.gdsc.petwalk.domain.pet.service.PetService;
 import com.gdsc.petwalk.global.principal.PrincipalDetails;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -19,63 +22,73 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/members")
+@RequestMapping("/api/pets")
 @RequiredArgsConstructor
 @Slf4j
 public class PetController {
 
     private final PetService petService;
 
-    @PostMapping("/pets")
+    @PostMapping
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Long> createPet(
-            @RequestBody PetCreateRequestDto petCreateRequestDto,
-            @AuthenticationPrincipal PrincipalDetails principalDetails){
+    @Operation(summary = "회원가입 후 펫 생성 로직", description = "회원가입 후 펫 생성 로직")
+    @ApiResponse(responseCode = "200", description = "회원가입 후 펫 생성, 성공 시 등록 펫 id 값 반환")
+    public ResponseEntity<PetResultDto<Long>> createPet(
+            @RequestPart("petCreateRequestDto") PetCreateRequestDto petCreateRequestDto,
+            @RequestPart("uploadPhoto") MultipartFile file,
+            @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
-        Long savedId = petService.addPetToMember(petCreateRequestDto, principalDetails);
+        Long savedId = petService.addPetToMember(petCreateRequestDto, file, principalDetails);
 
-        return ResponseEntity.ok(savedId);
+        return ResponseEntity.ok().body(PetResultDto.<Long>builder()
+                .status(true)
+                .code(200)
+                .message("펫 등록 성공!")
+                .data(savedId)
+                .build());
     }
 
-    @GetMapping("pets/{petId}")
+    @GetMapping("/{petId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<PetResponseDto> readPet(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @PathVariable("petId") Long id
-    ){
+    ) {
         PetResponseDto myPet = petService.findMyPet(principalDetails, id);
 
         return ResponseEntity.ok(myPet);
     }
 
-    @GetMapping("/pets")
+    @GetMapping()
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<PetResponseDto>> myPets(
-            @AuthenticationPrincipal PrincipalDetails principalDetails){
+            @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
         List<PetResponseDto> allPets = petService.findAllPets(principalDetails);
 
         return ResponseEntity.ok(allPets);
     }
 
-    @DeleteMapping("/pets/{petId}")
+    @DeleteMapping("/{petId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<String> deletePet(
-        @AuthenticationPrincipal PrincipalDetails principalDetails,
-        @PathVariable("petId") Long id
-    ){
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @PathVariable("petId") Long id
+    ) {
         petService.deletePet(principalDetails, id);
 
         return ResponseEntity.ok().body("펫 삭제에 성공하였습니다");
     }
 
-    @PutMapping("/pets/{petId}")
+    @PutMapping("/{petId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<String> updatePet(
             @RequestBody PetUpdateRequestDto petUpdateRequestDto,
