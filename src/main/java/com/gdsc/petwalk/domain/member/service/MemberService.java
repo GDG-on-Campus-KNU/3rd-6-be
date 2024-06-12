@@ -2,6 +2,8 @@ package com.gdsc.petwalk.domain.member.service;
 
 import com.gdsc.petwalk.auth.itself.dto.request.ProfileRequestDto;
 import com.gdsc.petwalk.auth.itself.dto.request.SignUpRequestDto;
+import com.gdsc.petwalk.auth.itself.dto.response.TokenResponseDto;
+import com.gdsc.petwalk.auth.jwt.service.JwtService;
 import com.gdsc.petwalk.domain.member.entity.Member;
 import com.gdsc.petwalk.domain.member.entity.Role;
 import com.gdsc.petwalk.domain.member.repository.MemberRepository;
@@ -17,11 +19,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
+import static com.gdsc.petwalk.domain.member.entity.Role.ROLE_USER;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class MemberService {
 
+    private final JwtService jwtService;
     private final MemberRepository memberRepository;
     private final PhotoService photoService;
     private final PasswordEncoder passwordEncoder;
@@ -39,7 +44,7 @@ public class MemberService {
         }
     }
 
-    public String signUp(SignUpRequestDto signUpRequest, MultipartFile multipartFile) {
+    public TokenResponseDto signUp(SignUpRequestDto signUpRequest, MultipartFile multipartFile) {
 
         Optional<Member> optionalExistingMember = memberRepository.findByEmail(signUpRequest.email());
 
@@ -51,17 +56,24 @@ public class MemberService {
         Member member = Member.builder()
                 .nickName(signUpRequest.nickName())
                 .email(signUpRequest.email())
-                .role(Role.ROLE_USER)
+                .role(ROLE_USER)
                 .password(passwordEncoder.encode(signUpRequest.password()))
                 .longitude(signUpRequest.longitude())
                 .latitude(signUpRequest.latitude())
                 .photoUrl(photoService.uploadAndGetUrl(multipartFile))
                 .build();
 
-        return memberRepository.save(member).getEmail();
+        memberRepository.save(member);
+
+        TokenResponseDto tokenResponseDto = TokenResponseDto.builder()
+                .accessToken(jwtService.createAccessToken(member.getEmail(), ROLE_USER.name()))
+                .refreshToken(jwtService.createRefreshToken())
+                .build();
+
+        return tokenResponseDto;
     }
 
-    public void setMemberProfile(ProfileRequestDto profileRequestDto, MultipartFile file){
+    public void setMemberProfile(ProfileRequestDto profileRequestDto, MultipartFile file) {
         Member member = memberRepository.findByEmail(profileRequestDto.email())
                 .orElseThrow(() -> new UsernameNotFoundException("해당 Email에 해당하는 유저가 없습니다"));
 
@@ -71,7 +83,7 @@ public class MemberService {
     }
 
 
-    public Member findMemberByEmail(String email) throws UsernameNotFoundException{
+    public Member findMemberByEmail(String email) throws UsernameNotFoundException {
         // 예외처리 해야함
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 Email에 해당하는 유저가 없습니다"));
@@ -79,7 +91,7 @@ public class MemberService {
         return member;
     }
 
-    public String saveRefresh(String email, String refreshToken){
+    public String saveRefresh(String email, String refreshToken) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow();
 
@@ -90,4 +102,7 @@ public class MemberService {
         return member.getRefresh();
     }
 
+    public boolean checkDuplicateEmail(String email) {
+        return memberRepository.existsByEmail(email);
+    }
 }

@@ -7,10 +7,12 @@ import com.gdsc.petwalk.domain.pet.dto.request.PetUpdateRequestDto;
 import com.gdsc.petwalk.domain.pet.dto.response.PetResponseDto;
 import com.gdsc.petwalk.domain.pet.entity.Pet;
 import com.gdsc.petwalk.domain.pet.repository.PetRepository;
+import com.gdsc.petwalk.domain.photo.service.PhotoService;
 import com.gdsc.petwalk.global.principal.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,8 +22,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PetService {
     private final PetRepository petRepository;
+    private final PhotoService photoService;
 
-    public Long addPetToMember(PetCreateRequestDto request, PrincipalDetails principalDetails) {
+    public Long addPetToMember(PetCreateRequestDto request, MultipartFile file, PrincipalDetails principalDetails) {
 
         Member member = principalDetails.getMember();
 
@@ -30,13 +33,14 @@ public class PetService {
                 .nickname(request.nickname())
                 .gender(request.gender())
                 .age(request.age())
-                .photoUrl(request.photoUrl())
                 .description(request.description())
                 .dogType(request.dogType())
                 .likesCount(0)
                 .build();
 
-        pet.setPetOwner(member);
+        photoService.savePhotoToPet(file, pet);
+
+        member.getPets().add(pet);
         Pet savePet = petRepository.save(pet);
 
         return savePet.getId();
@@ -51,7 +55,7 @@ public class PetService {
                     .nickname(pet.getNickname())
                     .gender(pet.getGender())
                     .age(pet.getAge())
-                    .photoUrl(pet.getPhotoUrl())
+                    .photoUrl(pet.getPhotos().get(0).getPhotoUrl())
                     .description(pet.getDescription())
                     .build();
         }

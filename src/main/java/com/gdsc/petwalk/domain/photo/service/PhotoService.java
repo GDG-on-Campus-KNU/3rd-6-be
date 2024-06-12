@@ -1,5 +1,6 @@
 package com.gdsc.petwalk.domain.photo.service;
 
+import com.gdsc.petwalk.domain.pet.entity.Pet;
 import com.gdsc.petwalk.domain.photo.entity.Photo;
 import com.gdsc.petwalk.domain.photo.repository.PhotoRepository;
 import com.gdsc.petwalk.domain.walkinvitation.entity.WalkInvitation;
@@ -20,7 +21,7 @@ public class PhotoService {
     private final PhotoRepository photoRepository;
     private final CloudStorageService cloudStorageService;
 
-    public List<Photo> savePhotos(MultipartFile[] multipartFiles, WalkInvitation walkInvitation) {
+    public List<Photo> savePhotosToWalkInvitation(MultipartFile[] multipartFiles, WalkInvitation walkInvitation) {
         List<Photo> savedPhotos = new ArrayList<>();
 
         for (MultipartFile file : multipartFiles) {
@@ -32,6 +33,19 @@ public class PhotoService {
 
             savedPhotos.add(photoRepository.save(photo));
         }
+
+        return savedPhotos;
+    }
+
+    public List<Photo> savePhotoToPet(MultipartFile file, Pet pet){
+        List<Photo> savedPhotos = new ArrayList<>();
+
+            String url = uploadAndGetUrl(file);
+            Photo photo = Photo.builder()
+                    .photoUrl(url)
+                    .pet(pet)
+                    .build();
+            savedPhotos.add(photoRepository.save(photo));
 
         return savedPhotos;
     }

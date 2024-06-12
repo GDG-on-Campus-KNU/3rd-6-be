@@ -1,6 +1,7 @@
 package com.gdsc.petwalk.domain.photo.entity;
 
 import com.gdsc.petwalk.domain.board.entity.Board;
+import com.gdsc.petwalk.domain.pet.entity.Pet;
 import com.gdsc.petwalk.domain.walkinvitation.entity.WalkInvitation;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,6 +29,10 @@ public class Photo {
     private Long id;
 
     private String photoUrl;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pet_id")
+    private Pet pet;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "walk_invitation_id")

@@ -66,7 +66,7 @@ public class WalkInvitationService {
             .walkingStatus("산책 대기 중")
             .build();
 
-        walkInvitation.setPhotoUrls(photoService.savePhotos(multipartFiles, walkInvitation));
+        walkInvitation.setPhotoUrls(photoService.savePhotosToWalkInvitation(multipartFiles, walkInvitation));
 
         walkInvitationRepository.save(walkInvitation);
 

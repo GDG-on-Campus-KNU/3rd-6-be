@@ -2,6 +2,7 @@ package com.gdsc.petwalk.domain.pet.entity;
 
 import com.gdsc.petwalk.domain.member.entity.Member;
 import com.gdsc.petwalk.domain.pet.dto.request.PetUpdateRequestDto;
+import com.gdsc.petwalk.domain.photo.entity.Photo;
 import com.gdsc.petwalk.domain.review.entity.Review;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -40,9 +41,6 @@ public class Pet {
     private String gender;
     private Integer age;
 
-    @Column(name = "photo_url")
-    private String photoUrl;
-
     private String description;
 
     @Column(name = "dog_type")
@@ -54,18 +52,21 @@ public class Pet {
     @OneToMany(mappedBy = "pet")
     private List<Review> reviews = new ArrayList<>();
 
+    @OneToMany(mappedBy = "pet")
+    private List<Photo> photos = new ArrayList<>();
+
     @Builder
-    public Pet(Long id, Member member, String nickname, String gender, Integer age, String photoUrl, String description, Integer likesCount, String dogType, List<Review> reviews) {
+    public Pet(Long id, Member member, String nickname, String gender, Integer age, String description, String dogType, Integer likesCount, List<Review> reviews, List<Photo> photos) {
         this.id = id;
         this.member = member;
         this.nickname = nickname;
         this.gender = gender;
         this.age = age;
-        this.photoUrl = photoUrl;
         this.description = description;
-        this.likesCount = likesCount;
         this.dogType = dogType;
+        this.likesCount = likesCount;
         this.reviews = reviews;
+        this.photos = photos;
     }
 
     public void setPetOwner(Member member) {
@@ -83,10 +84,6 @@ public class Pet {
 
         if (request.age() != null) {
             this.age = request.age();
-        }
-
-        if (request.photoUrl() != null) {
-            this.photoUrl = request.photoUrl();
         }
 
         if (request.description() != null) {
