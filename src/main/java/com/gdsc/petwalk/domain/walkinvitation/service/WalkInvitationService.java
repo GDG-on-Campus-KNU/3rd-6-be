@@ -1,6 +1,7 @@
 package com.gdsc.petwalk.domain.walkinvitation.service;
 
 import com.gdsc.petwalk.domain.member.entity.Member;
+import com.gdsc.petwalk.domain.member.repository.MemberRepository;
 import com.gdsc.petwalk.domain.photo.entity.Photo;
 import com.gdsc.petwalk.domain.photo.service.PhotoService;
 import com.gdsc.petwalk.domain.walkinvitation.dto.request.WalkInvitaionCreateRequestDto;
@@ -10,6 +11,7 @@ import com.gdsc.petwalk.domain.walkinvitation.entity.WalkInvitation;
 import com.gdsc.petwalk.domain.walkinvitation.repository.WalkInvitationRepository;
 import com.gdsc.petwalk.global.principal.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +25,7 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class WalkInvitationService {
 
+    private final MemberRepository memberRepository;
     private final WalkInvitationRepository walkInvitationRepository;
     private final PhotoService photoService;
 
@@ -42,7 +45,7 @@ public class WalkInvitationService {
                 .latitude(walkInvitation.getLatitude())
                 .longitude(walkInvitation.getLongitude())
                 .detailedLocation(walkInvitation.getDetailedLocation())
-                .walkDateTime(walkInvitation.getWalkDateTime())
+                .walkDateTime(walkInvitation.getWalkStartDateTime())
                 .walkingStatus(walkInvitation.getWalkingStatus())
                 .walkInvitationPhotoUrls(photoUrls)
                 .memberName(member.getNickName())
@@ -53,7 +56,8 @@ public class WalkInvitationService {
     public Long createWalkInvitation(WalkInvitaionCreateRequestDto request,
         MultipartFile[] multipartFiles, PrincipalDetails principalDetails) {
 
-        Member member = principalDetails.getMember();
+        Member member = memberRepository.findByEmail(principalDetails.getMember().getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("해당 Email에 해당하는 유저가 없습니다"));
 
         WalkInvitation walkInvitation = WalkInvitation.builder()
             .writer(member)
@@ -62,11 +66,13 @@ public class WalkInvitationService {
             .latitude(request.getLatitude())
             .longitude(request.getLongitude())
             .detailedLocation(request.getDetailedLocation())
-            .walkDateTime(request.getWalkDateTime())
+            .walkStartDateTime(request.getWalkStartDateTime())
             .walkingStatus("산책 대기 중")
             .build();
+        member.getWalkInvitations().add(walkInvitation);
 
-        walkInvitation.setPhotoUrls(photoService.savePhotosToWalkInvitation(multipartFiles, walkInvitation));
+        List<Photo> photos = photoService.savePhotosToWalkInvitation(multipartFiles, walkInvitation);
+        walkInvitation.addPhotos(photos);
 
         walkInvitationRepository.save(walkInvitation);
 
@@ -82,7 +88,7 @@ public class WalkInvitationService {
         LocalDateTime after24Hours = now.plusHours(24);
 
         List<WalkInvitation> walkInvitations
-                = walkInvitationRepository.findAllByWalkDateTimeBetween(now, after24Hours);
+                = walkInvitationRepository.findAllByWalkStartDateTimeBetween(now, after24Hours);
 
         return HomePageResponseDto.getListFrom(walkInvitations);
     }

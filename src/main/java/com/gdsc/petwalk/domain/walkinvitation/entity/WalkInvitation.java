@@ -39,7 +39,7 @@ public class WalkInvitation {
     private String detailedLocation; // 세부 위치
 
     @Column(nullable = false)
-    private LocalDateTime walkDateTime; // 산책 날짜
+    private LocalDateTime walkStartDateTime; // 산책 날짜
 
     private String walkingStatus; // 산책 상태
 
@@ -52,16 +52,20 @@ public class WalkInvitation {
     private List<Photo> photoUrls = new ArrayList<>();
 
     @Builder
-    public WalkInvitation(Long id, String title, String content, double latitude, double longitude, String detailedLocation, LocalDateTime walkDateTime, String walkingStatus, Member writer, List<Photo> photoUrls) {
+    public WalkInvitation(Long id, String title, String content, double latitude, double longitude, String detailedLocation, LocalDateTime walkStartDateTime, String walkingStatus, Member writer, List<Photo> photoUrls) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.latitude = latitude;
         this.longitude = longitude;
         this.detailedLocation = detailedLocation;
-        this.walkDateTime = walkDateTime;
+        this.walkStartDateTime = walkStartDateTime;
         this.walkingStatus = walkingStatus;
         this.writer = writer;
         this.photoUrls = photoUrls;
+    }
+
+    public void addPhotos(List<Photo> photos){
+        this.photoUrls = photos;
     }
 }

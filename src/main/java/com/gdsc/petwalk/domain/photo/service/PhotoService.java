@@ -31,7 +31,7 @@ public class PhotoService {
                 .walkInvitation(walkInvitation)
                 .build();
 
-            savedPhotos.add(photoRepository.save(photo));
+            savedPhotos.add(photo);
         }
 
         return savedPhotos;
