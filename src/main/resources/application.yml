@@ -66,9 +66,10 @@ cloud:
       bucket: petwalk-bucket
 
 springdoc:
+  packages-to-scan: com.gdsc.petwalk
   override-with-generic-response: true
-  default-consumes-media-type: application/json # 소비 미디어 타입
-  default-produces-media-type: application/json # 생산 미디어 타입
+  default-consumes-media-type: application/json;charset=UTF-8 # 소비 미디어 타입
+  default-produces-media-type: application/json;charset=UTF-8 # 생산 미디어 타입
   swagger-ui:
     operations-sorter: method # operations 정렬 방식은 HTTP Method 순
     tags-sorter: alpha # tag 정렬 방식은 알파벳 순

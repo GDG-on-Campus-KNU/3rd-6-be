@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -39,14 +40,14 @@ public class PetController {
 
     private final PetService petService;
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "회원가입 후 펫 생성 로직", description = "회원가입 후 펫 생성 로직")
+    @Operation(summary = "회원가입 후 펫 생성 로직", description = "회원가입 후 펫 생성 로직, petCreateRequestDto는 application/json 형식, uploadPhoto는 multipart/form-data 형식으로, 두 개를 한꺼번에 form-data 형식으로 보내주면 됨. <br> try it out을 누르면 dto 정보를 확인 할 수 있습니다. swagger에서 직접 테스트는 안되니 참고하세요!")
     @ApiResponse(responseCode = "200", description = "회원가입 후 펫 생성, 성공 시 등록 펫 id 값 반환")
     @Parameter(description = "ex) Bearer eyzaqwd...", name = "Authorization", in = ParameterIn.HEADER)
     public ResponseEntity<PetResultDto<Long>> createPet(
-            @RequestPart("petCreateRequestDto") PetCreateRequestDto petCreateRequestDto,
-            @RequestPart("uploadPhoto") MultipartFile file,
+            @RequestPart(value = "petCreateRequestDto") PetCreateRequestDto petCreateRequestDto,
+            @RequestPart(value = "uploadPhoto") MultipartFile file,
             @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
         Long savedId = petService.addPetToMember(petCreateRequestDto, file, principalDetails);

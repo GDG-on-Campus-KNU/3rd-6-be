@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -51,8 +52,8 @@ public class AuthController {
         );
     }
 
-    @PostMapping("/sign-up")
-    @Operation(summary = "회원가입 로직", description = "signUpRequestDto는 application/json 형식, uploadPhoto는 multipart/form-data 형식으로, 두 개를 한꺼번에 form-data 형식으로 보내주면 됨")
+    @PostMapping(value = "/sign-up", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "회원가입 로직", description = "signUpRequestDto는 application/json 형식, uploadPhoto는 multipart/form-data 형식으로, 두 개를 한꺼번에 form-data 형식으로 보내주면 됨. <br> try it out을 누르면 dto 정보를 확인 할 수 있습니다. swagger에서 직접 테스트는 안되니 참고하세요!")
     @ApiResponse(responseCode = "200", description = "token 반환")
     public ResponseEntity<AuthResultDto<TokenResponseDto>> signUp(
             @RequestPart("signUpRequestDto") @Valid SignUpRequestDto request,
