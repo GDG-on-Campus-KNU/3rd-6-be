@@ -36,7 +36,7 @@ public class HomeController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "홈 화면 글쓰기 로직", description = "홈 화면 글쓰기 로직, WalkInvitaionCreateRequestDto는 json형식, uploadPhotos는 multipart/form-data")
+    @Operation(summary = "홈 화면 글쓰기 로직", description = "홈 화면 글쓰기 로직, WalkInvitaionCreateRequestDto는 application/json형식, uploadPhotos는 multipart/form-data로 한번에 form-data 형식으로 보내주면 됨. <br> try it out을 누르면 dto 정보를 확인 할 수 있습니다. swagger에서 직접 테스트는 안되니 참고하세요!")
     @ApiResponse(responseCode = "200", description = "글쓰기 성공 시 Long 타입 id 값 반환")
     public ResponseEntity<Long> createWalkInvitation(
             @RequestPart("walkInvitaionCreateRequestDto") WalkInvitaionCreateRequestDto request,

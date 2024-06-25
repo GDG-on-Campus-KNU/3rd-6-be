@@ -13,7 +13,7 @@ import java.util.List;
 public interface WalkInvitationRepository extends JpaRepository<WalkInvitation, Long> {
     List<WalkInvitation> findAllByWriter(Member member);
 
-    List<WalkInvitation> findAllByWalkDateTimeBetween(LocalDateTime start, LocalDateTime end);
+    List<WalkInvitation> findAllByWalkStartDateTimeBetween(LocalDateTime start, LocalDateTime end);
 
     @Query("SELECT u FROM walk_invitations u WHERE " +
             "(6371 * acos(cos(radians(:centerLat)) * cos(radians(u.latitude)) " +

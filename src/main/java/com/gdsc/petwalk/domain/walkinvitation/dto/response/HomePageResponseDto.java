@@ -38,7 +38,7 @@ public class HomePageResponseDto {
                     .latitude(walkInvitation.getLatitude())
                     .longitude(walkInvitation.getLongitude())
                     .detailedLocation(walkInvitation.getDetailedLocation())
-                    .walkDateTime(walkInvitation.getWalkDateTime())
+                    .walkDateTime(walkInvitation.getWalkStartDateTime())
                     .walkingStatus(walkInvitation.getWalkingStatus())
                     // .walkInvitationPhotoUrl(walkInvitation.getPhotoUrls().get(0).getPhotoUrl())
                     .walkInvitationPhotoUrl(null)
