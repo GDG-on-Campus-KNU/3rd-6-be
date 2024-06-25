@@ -38,9 +38,9 @@ public class PetService {
                 .likesCount(0)
                 .build();
 
-        photoService.savePhotoToPet(file, pet);
-
         member.getPets().add(pet);
+
+        photoService.savePhotoToPet(file, pet);
         Pet savePet = petRepository.save(pet);
 
         return savePet.getId();
