@@ -2,12 +2,10 @@ package com.gdsc.petwalk.domain.walkinvitation.dto.request;
 
 import lombok.Data;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @Data
-public class WalkInvitaionCreateRequestDto {
+public class WalkInvitationCreateRequestDto {
 
     private String title;
     private String content;

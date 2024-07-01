@@ -6,11 +6,13 @@ import lombok.Getter;
 @Getter
 public class ExceptionDto {
 
+    private boolean status;
     private String message;
     private String errorCode;
 
     @Builder
-    public ExceptionDto(String message, String errorCode) {
+    public ExceptionDto(boolean status, String message, String errorCode) {
+        this.status = status;
         this.message = message;
         this.errorCode = errorCode;
     }
