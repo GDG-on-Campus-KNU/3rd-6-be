@@ -80,7 +80,7 @@ public class Member {
     @OneToMany(mappedBy = "commenter")
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "writer")
+    @OneToMany(mappedBy = "member")
     private List<WalkInvitation> walkInvitations = new ArrayList<>();
 
     @Builder
