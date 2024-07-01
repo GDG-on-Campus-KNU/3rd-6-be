@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -27,19 +28,23 @@ public class JwtExceptionHandlerFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             filterChain.doFilter(request, response);
-        } catch (NotValidTokenException e){
-            HttpStatus httpStatus = e.getErrorCode().getHttpStatus();
-            String message = e.getErrorCode().getMessage();
-
-            Map<String, Object> jsonResponse = new HashMap<>();
-            jsonResponse.put("status", httpStatus.value());
-            jsonResponse.put("message", message);
-
-            response.setStatus(httpStatus.value());
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-
-            objectMapper.writeValue(response.getWriter(), jsonResponse);
+        } catch (NotValidTokenException e) {
+            handleException(response, e.getErrorCode().getHttpStatus(), e.getErrorCode().getMessage());
+        } catch (UsernameNotFoundException e) {
+            handleException(response, HttpStatus.UNAUTHORIZED, e.getMessage());
         }
+    }
+
+    private void handleException(HttpServletResponse response, HttpStatus status, String message) throws IOException {
+        Map<String, Object> jsonResponse = new HashMap<>();
+        jsonResponse.put("status", false);
+        jsonResponse.put("message", message);
+        jsonResponse.put("errorCode", status.value());
+
+        response.setStatus(status.value());
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        objectMapper.writeValue(response.getWriter(), jsonResponse);
     }
 }
