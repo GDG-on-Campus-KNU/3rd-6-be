@@ -41,18 +41,19 @@ public class WalkInvitation {
     @Column(nullable = false)
     private LocalDateTime walkStartDateTime; // 산책 날짜
 
-    private String walkingStatus; // 산책 상태
+    @Enumerated(EnumType.STRING)
+    private WalkingStatus walkingStatus; // 산책 상태
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    private Member writer; // 게시글 작성자
+    private Member member; // 게시글 작성자
 
     @Setter
     @OneToMany(mappedBy = "walkInvitation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Photo> photoUrls = new ArrayList<>();
 
     @Builder
-    public WalkInvitation(Long id, String title, String content, double latitude, double longitude, String detailedLocation, LocalDateTime walkStartDateTime, String walkingStatus, Member writer, List<Photo> photoUrls) {
+    public WalkInvitation(Long id, String title, String content, double latitude, double longitude, String detailedLocation, LocalDateTime walkStartDateTime, WalkingStatus walkingStatus, Member member, List<Photo> photoUrls) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -61,7 +62,7 @@ public class WalkInvitation {
         this.detailedLocation = detailedLocation;
         this.walkStartDateTime = walkStartDateTime;
         this.walkingStatus = walkingStatus;
-        this.writer = writer;
+        this.member = member;
         this.photoUrls = photoUrls;
     }
 

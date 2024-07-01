@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface WalkInvitationRepository extends JpaRepository<WalkInvitation, Long> {
-    List<WalkInvitation> findAllByWriter(Member member);
+    List<WalkInvitation> findAllByMember(Member member);
 
     List<WalkInvitation> findAllByWalkStartDateTimeBetween(LocalDateTime start, LocalDateTime end);
 

@@ -1,14 +1,12 @@
 package com.gdsc.petwalk.domain.walkinvitation.controller;
 
-import com.gdsc.petwalk.auth.itself.dto.request.SignUpRequestDto;
-import com.gdsc.petwalk.domain.walkinvitation.dto.request.WalkInvitaionCreateRequestDto;
+import com.gdsc.petwalk.domain.walkinvitation.dto.request.WalkInvitationCreateRequestDto;
 import com.gdsc.petwalk.domain.walkinvitation.dto.response.HomePageResponseDto;
 import com.gdsc.petwalk.domain.walkinvitation.dto.response.WalkInvitationDetailsResponseDto;
+import com.gdsc.petwalk.domain.walkinvitation.dto.response.WalkInvitationResultDto;
 import com.gdsc.petwalk.domain.walkinvitation.service.WalkInvitationService;
 import com.gdsc.petwalk.global.principal.PrincipalDetails;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -38,37 +36,53 @@ public class HomeController {
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "홈 화면 글쓰기 로직", description = "홈 화면 글쓰기 로직, WalkInvitaionCreateRequestDto는 application/json형식, uploadPhotos는 multipart/form-data로 한번에 form-data 형식으로 보내주면 됨. <br> try it out을 누르면 dto 정보를 확인 할 수 있습니다. swagger에서 직접 테스트는 안되니 참고하세요!")
     @ApiResponse(responseCode = "200", description = "글쓰기 성공 시 Long 타입 id 값 반환")
-    public ResponseEntity<Long> createWalkInvitation(
-            @RequestPart("walkInvitaionCreateRequestDto") WalkInvitaionCreateRequestDto request,
+    public ResponseEntity<WalkInvitationResultDto<?>> createWalkInvitation(
+            @RequestPart("walkInvitationCreateRequestDto") WalkInvitationCreateRequestDto request,
             @RequestPart("uploadPhotos") MultipartFile[] multipartFiles,
-            @AuthenticationPrincipal PrincipalDetails principalDetails){
+            @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
         Long savedId = walkInvitationService.createWalkInvitation(request, multipartFiles, principalDetails);
 
-        return ResponseEntity.ok().body(savedId);
+        return ResponseEntity.ok().body(WalkInvitationResultDto.builder()
+                .status(true)
+                .code(200)
+                .message("글 등록 성공!")
+                .data(savedId)
+                .build());
     }
 
     @GetMapping("/{walkInvitationId}")
     @Operation(summary = "홈 화면 글 하나 조회 로직", description = "홈 화면 글 하나 조회하는 로직")
     @ApiResponse(responseCode = "200", description = "글쓰기 성공 시 WalkInvitationDetailsResponseDto 타입 dto 반환")
-    public ResponseEntity<WalkInvitationDetailsResponseDto> getDetail(
+    public ResponseEntity<WalkInvitationResultDto<WalkInvitationDetailsResponseDto>> getDetail(
             @PathVariable("walkInvitationId") Long id
-    ){
+    ) {
         WalkInvitationDetailsResponseDto response = walkInvitationService.getHomeDetailsById(id);
 
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok().body(WalkInvitationResultDto.<WalkInvitationDetailsResponseDto>builder()
+                .status(true)
+                .code(200)
+                .message("홈 화면 글 상세내용 불러오기 성공!")
+                .data(response)
+                .build());
     }
 
     @GetMapping("/me")
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "홈 화면에 보여질 글들 조회 로직", description = "홈 화면 글들 조회하는 로직이고, 기본은 오늘 하루치만")
-    @ApiResponse(responseCode = "200", description = "글쓰기 성공 시 HomePageResponseDto 타입 dto 반환")
-    public ResponseEntity<List<HomePageResponseDto>> getHomepageLists(
+    @Operation(summary = "홈 화면에 보여질 글들 조회 로직", description = "홈 화면 글들 조회하는 로직이고, 기본은 오늘 하루치만... 추후 글 불러오기 api 필요")
+    @ApiResponse(responseCode = "200", description = "글쓰기 성공 시 HomePageResponseDto 타입의 list 반환")
+    public ResponseEntity<WalkInvitationResultDto<List<HomePageResponseDto>>> getHomepageLists(
             @AuthenticationPrincipal PrincipalDetails principalDetails
-    ){
+    ) {
         List<HomePageResponseDto> homepageLists
                 = walkInvitationService.getTodayHomePageLists(principalDetails);
 
-        return ResponseEntity.ok().body(homepageLists);
+        return ResponseEntity.ok().body(WalkInvitationResultDto.<List<HomePageResponseDto>>builder()
+                .status(true)
+                .code(200)
+                .message("홈 화면 글 불러오기 성공!")
+                .data(homepageLists)
+                .build()
+        );
     }
 }
